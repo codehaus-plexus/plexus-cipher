@@ -24,7 +24,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Named;
 
 /**
- * @author Oleg Gusakov</a>
+ * @author Oleg Gusakov
  */
 @Named( "default" )
 @Typed( PlexusCipher.class )

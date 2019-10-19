@@ -19,14 +19,10 @@ under the License.
 
 package org.sonatype.plexus.components.cipher;
 
-import java.util.Arrays;
-import java.util.Properties;
-
 import org.sonatype.guice.bean.containers.InjectedTestCase;
 
 /**
  * @author Oleg Gusakov
- * @version $Id$
  */
 public class PBECipherTest
     extends InjectedTestCase

@@ -18,7 +18,6 @@ import org.sonatype.guice.bean.containers.InjectedTestCase;
  * Test the Plexus Cipher container
  * 
  * @author Oleg Gusakov
- * @version $Id$
  */
 public class DefaultPlexusCipherTest
     extends InjectedTestCase

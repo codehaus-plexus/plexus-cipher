@@ -39,7 +39,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author Oleg Gusakov
- * @version $Id$
  */
 public class PBECipher
 {
