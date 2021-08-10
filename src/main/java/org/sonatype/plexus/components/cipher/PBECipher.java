@@ -28,9 +28,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -38,6 +36,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
+ * This class is thread-safe.
+ *
  * @author Oleg Gusakov
  */
 public class PBECipher
@@ -60,23 +60,8 @@ public class PBECipher
 
     protected static final int PBE_ITERATIONS = 1000;
 
-    protected MessageDigest _digester;
-    
     private static final SecureRandom _secureRandom = new SecureRandom();
 
-    //---------------------------------------------------------------
-    public PBECipher()
-    throws PlexusCipherException
-    {
-        try
-        {
-            _digester = MessageDigest.getInstance( DIGEST_ALG );
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new PlexusCipherException(e);
-        }
-    }
     //---------------------------------------------------------------
     private byte[] getSalt( final int sz )
     {
@@ -116,9 +101,7 @@ public class PBECipher
             
             byte [] encryptedTextBytes = Base64.encodeBase64( allEncryptedBytes );
             
-            String encryptedText = new String( encryptedTextBytes, STRING_ENCODING );
-    
-            return encryptedText;
+            return new String( encryptedTextBytes, STRING_ENCODING );
         }
         catch( Exception e)
         {
@@ -150,9 +133,7 @@ public class PBECipher
     
             byte [] clearBytes = cipher.doFinal( encryptedBytes );
             
-            String clearText = new String( clearBytes, STRING_ENCODING ); 
-    
-            return clearText;
+            return new String( clearBytes, STRING_ENCODING );
         }
         catch( Exception e)
         {
@@ -163,8 +144,8 @@ public class PBECipher
     private Cipher createCipher( final byte [] pwdAsBytes, byte [] salt, final int mode )
     throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException
     {
-        _digester.reset();
-        
+        MessageDigest _digester = MessageDigest.getInstance( DIGEST_ALG );
+
         byte[] keyAndIv = new byte[ SPICE_SIZE * 2 ];
         
         if( salt == null || salt.length == 0 )

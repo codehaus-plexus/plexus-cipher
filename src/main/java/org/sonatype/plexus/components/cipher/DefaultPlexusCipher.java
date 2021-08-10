@@ -20,30 +20,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.sisu.Typed;
 
 /**
+ * Default implementation of {@link PlexusCipher}. This class is thread safe.
+ *
  * @author Oleg Gusakov
  */
+@Singleton
 @Named( "default" )
 @Typed( PlexusCipher.class )
 public class DefaultPlexusCipher
     implements PlexusCipher
 {
-
     private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile( ".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*" );
 
     private final PBECipher _cipher;
 
     // ---------------------------------------------------------------
     public DefaultPlexusCipher()
-        throws PlexusCipherException
     {
         _cipher = new PBECipher();
     }
 
     // ---------------------------------------------------------------
+    @Override
     public String encrypt( final String str, final String passPhrase )
         throws PlexusCipherException
     {
@@ -56,6 +59,7 @@ public class DefaultPlexusCipher
     }
 
     // ---------------------------------------------------------------
+    @Override
     public String encryptAndDecorate( final String str, final String passPhrase )
         throws PlexusCipherException
     {
@@ -63,6 +67,7 @@ public class DefaultPlexusCipher
     }
 
     // ---------------------------------------------------------------
+    @Override
     public String decrypt( final String str, final String passPhrase )
         throws PlexusCipherException
     {
@@ -75,6 +80,7 @@ public class DefaultPlexusCipher
     }
 
     // ---------------------------------------------------------------
+    @Override
     public String decryptDecorated( final String str, final String passPhrase )
         throws PlexusCipherException
     {
@@ -92,6 +98,7 @@ public class DefaultPlexusCipher
     }
 
     // ----------------------------------------------------------------------------
+    @Override
     public boolean isEncryptedString( final String str )
     {
         if ( str == null || str.length() < 1 )
@@ -105,7 +112,7 @@ public class DefaultPlexusCipher
     }
 
     // ----------------------------------------------------------------------------
-    // -------------------
+    @Override
     public String unDecorate( final String str )
         throws PlexusCipherException
     {
@@ -122,15 +129,14 @@ public class DefaultPlexusCipher
     }
 
     // ----------------------------------------------------------------------------
-    // -------------------
+    @Override
     public String decorate( final String str )
     {
         return ENCRYPTED_STRING_DECORATION_START + ( str == null ? "" : str ) + ENCRYPTED_STRING_DECORATION_STOP;
     }
 
     // ---------------------------------------------------------------
-    // ---------------------------------------------------------------
-    // ***************************************************************
+
     /**
      * Exploratory part. This method returns all available services types
      */
