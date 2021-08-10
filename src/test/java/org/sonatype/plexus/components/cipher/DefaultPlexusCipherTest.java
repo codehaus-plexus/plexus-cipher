@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Sonatype, Inc. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
@@ -12,7 +12,13 @@
  */
 package org.sonatype.plexus.components.cipher;
 
-import org.sonatype.guice.bean.containers.InjectedTestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test the Plexus Cipher container
@@ -20,9 +26,8 @@ import org.sonatype.guice.bean.containers.InjectedTestCase;
  * @author Oleg Gusakov
  */
 public class DefaultPlexusCipherTest
-    extends InjectedTestCase
 {
-    private String passPhrase = "testtest";
+    private final String passPhrase = "testtest";
 
     String str = "my testing phrase";
 
@@ -31,14 +36,14 @@ public class DefaultPlexusCipherTest
     DefaultPlexusCipher pc;
 
     // -------------------------------------------------------------
-    public void setUp()
+    @Before
+    public void prepare()
         throws Exception
     {
-        super.setUp();
-
         pc = new DefaultPlexusCipher();
     }
 
+    @Test
     public void testIsEncryptedString()
     {
         String noBraces = "This is a test";
@@ -55,6 +60,7 @@ public class DefaultPlexusCipherTest
         assertTrue( pc.isEncryptedString( mixedBraces ) );
     }
 
+    @Test
     public void testUnDecorate_BracesPermutations()
         throws PlexusCipherException
     {
@@ -68,6 +74,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testDefaultAlgorithmExists()
         throws Exception
     {
@@ -92,6 +100,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void stestFindDefaultAlgorithm()
         throws Exception
     {
@@ -117,6 +127,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testEncrypt()
         throws Exception
     {
@@ -130,6 +142,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testEncryptVariableLengths()
         throws Exception
     {
@@ -160,6 +174,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testDecorate()
         throws Exception
     {
@@ -169,6 +185,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testUnDecorate()
         throws Exception
     {
@@ -179,6 +197,8 @@ public class DefaultPlexusCipherTest
     }
 
     // -------------------------------------------------------------
+
+    @Test
     public void testEncryptAndDecorate()
         throws Exception
     {
@@ -186,6 +206,4 @@ public class DefaultPlexusCipherTest
 
         assertEquals( '{', res.charAt( 0 ) );
     }
-    // -------------------------------------------------------------
-    // -------------------------------------------------------------
 }

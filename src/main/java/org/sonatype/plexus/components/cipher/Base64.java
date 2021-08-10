@@ -95,7 +95,7 @@ public class Base64
      * The value of undefined encodings is <code>-1</code>.
      * </p>
      */
-    private static byte[] base64Alphabet = new byte[BASELENGTH];
+    private static final byte[] base64Alphabet = new byte[BASELENGTH];
 
     /**
      * <p/>
@@ -110,7 +110,7 @@ public class Base64
      * For example, <code>lookUpBase64Alphabet[62] </code> returns <code>'+'</code>.
      * </p>
      */
-    private static byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
+    private static final byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 
     // Populating the lookup and character arrays
     static {

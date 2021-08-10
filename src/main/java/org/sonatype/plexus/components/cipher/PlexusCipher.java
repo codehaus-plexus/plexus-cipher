@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Sonatype, Inc. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
@@ -17,16 +17,16 @@ package org.sonatype.plexus.components.cipher;
  */
 public interface PlexusCipher
 {
-    public static final char ENCRYPTED_STRING_DECORATION_START = '{';
+    char ENCRYPTED_STRING_DECORATION_START = '{';
 
-    public static final char ENCRYPTED_STRING_DECORATION_STOP = '}';
+    char ENCRYPTED_STRING_DECORATION_STOP = '}';
 
     /**
      * encrypt given string with the given passPhrase and encode it into base64
      * 
      * @param str
      * @param passPhrase
-     * @return
+     * @return encrypted str
      * @throws PlexusCipherException
      */
     String encrypt( String str, String passPhrase )
@@ -38,7 +38,7 @@ public interface PlexusCipher
      * 
      * @param str
      * @param passPhrase
-     * @return
+     * @return encrypted and decorated str
      * @throws PlexusCipherException
      */
     String encryptAndDecorate( String str, String passPhrase )
@@ -49,7 +49,7 @@ public interface PlexusCipher
      * 
      * @param str
      * @param passPhrase
-     * @return
+     * @return decrypted str
      * @throws PlexusCipherException
      */
     String decrypt( String str, String passPhrase )
@@ -61,7 +61,7 @@ public interface PlexusCipher
      * 
      * @param str
      * @param passPhrase
-     * @return
+     * @return decrypted decorated str
      * @throws PlexusCipherException
      */
     String decryptDecorated( String str, String passPhrase )
@@ -71,26 +71,25 @@ public interface PlexusCipher
      * check if given string is decorated
      * 
      * @param str
-     * @return
+     * @return true if string is encrypted
      */
-    public boolean isEncryptedString( String str );
+    boolean isEncryptedString( String str );
 
     /**
      * return string inside decorations
      * 
      * @param str
-     * @return
+     * @return undecorated str
      * @throws PlexusCipherException
      */
-    public String unDecorate( String str )
+    String unDecorate( String str )
         throws PlexusCipherException;
 
     /**
      * decorated given string with { and }
      * 
      * @param str
-     * @return
+     * @return decorated str
      */
-    public String decorate( String str );
-
+    String decorate( String str );
 }

@@ -19,13 +19,17 @@ under the License.
 
 package org.sonatype.plexus.components.cipher;
 
-import org.sonatype.guice.bean.containers.InjectedTestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Oleg Gusakov
  */
 public class PBECipherTest
-    extends InjectedTestCase
 {
     PBECipher _cipher;
 
@@ -35,13 +39,14 @@ public class PBECipherTest
 
     String _password = "testtest";
 
-    protected void setUp()
+    @Before
+    public void prepare()
         throws Exception
     {
-        super.setUp();
         _cipher = new PBECipher();
     }
 
+    @Test
     public void testEncrypt()
         throws Exception
     {
@@ -60,6 +65,7 @@ public class PBECipherTest
         assertFalse( enc.equals( enc2 ) );
     }
 
+    @Test
     public void testDecrypt()
         throws Exception
     {
@@ -67,7 +73,8 @@ public class PBECipherTest
 
         assertEquals( _cleatText, clear );
     }
-    
+
+    @Test
     public void testEncoding()
     	throws Exception
     {
