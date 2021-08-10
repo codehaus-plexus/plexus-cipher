@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Sonatype, Inc. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
@@ -15,13 +15,13 @@ package org.sonatype.plexus.components.cipher;
 import java.security.Provider;
 import java.security.Security;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.enterprise.inject.Typed;
 import javax.inject.Named;
+
+import org.eclipse.sisu.Typed;
 
 /**
  * @author Oleg Gusakov
@@ -136,29 +136,26 @@ public class DefaultPlexusCipher
      */
     public static String[] getServiceTypes()
     {
-        Set result = new HashSet();
+        Set<String> result = new HashSet<>();
 
         // All all providers
         Provider[] providers = Security.getProviders();
-        for ( int i = 0; i < providers.length; i++ )
-        {
+        for (Provider provider : providers) {
             // Get services provided by each provider
-            Set keys = providers[i].keySet();
-            for ( Iterator it = keys.iterator(); it.hasNext(); )
-            {
-                String key = (String) it.next();
-                key = key.split( " " )[0];
+            Set<Object> keys = provider.keySet();
+            for (Object o : keys) {
+                String key = (String) o;
+                key = key.split(" ")[0];
 
-                if ( key.startsWith( "Alg.Alias." ) )
-                {
+                if (key.startsWith("Alg.Alias.")) {
                     // Strip the alias
-                    key = key.substring( 10 );
+                    key = key.substring(10);
                 }
-                int ix = key.indexOf( '.' );
-                result.add( key.substring( 0, ix ) );
+                int ix = key.indexOf('.');
+                result.add(key.substring(0, ix));
             }
         }
-        return (String[]) result.toArray( new String[result.size()] );
+        return result.toArray( new String[result.size()] );
     }
 
     /**
@@ -166,31 +163,27 @@ public class DefaultPlexusCipher
      */
     public static String[] getCryptoImpls( final String serviceType )
     {
-        Set result = new HashSet();
+        Set<String> result = new HashSet<>();
 
         // All all providers
         Provider[] providers = Security.getProviders();
-        for ( int i = 0; i < providers.length; i++ )
-        {
+        for (Provider provider : providers) {
             // Get services provided by each provider
-            Set keys = providers[i].keySet();
-            for ( Iterator it = keys.iterator(); it.hasNext(); )
-            {
-                String key = (String) it.next();
-                key = key.split( " " )[0];
+            Set<Object> keys = provider.keySet();
+            for (Object o : keys) {
+                String key = (String) o;
+                key = key.split(" ")[0];
 
-                if ( key.startsWith( serviceType + "." ) )
-                {
-                    result.add( key.substring( serviceType.length() + 1 ) );
+                if (key.startsWith(serviceType + ".")) {
+                    result.add(key.substring(serviceType.length() + 1));
                 }
-                else if ( key.startsWith( "Alg.Alias." + serviceType + "." ) )
-                {
+                else if (key.startsWith("Alg.Alias." + serviceType + ".")) {
                     // This is an alias
-                    result.add( key.substring( serviceType.length() + 11 ) );
+                    result.add(key.substring(serviceType.length() + 11));
                 }
             }
         }
-        return (String[]) result.toArray( new String[result.size()] );
+        return result.toArray( new String[result.size()] );
     }
 
     // ---------------------------------------------------------------
@@ -201,26 +194,18 @@ public class DefaultPlexusCipher
         String[] serviceTypes = getServiceTypes();
         if ( serviceTypes != null )
         {
-            for ( int i = 0; i < serviceTypes.length; i++ )
-            {
-                String serviceType = serviceTypes[i];
-                String[] serviceProviders = getCryptoImpls( serviceType );
-                if ( serviceProviders != null )
-                {
-                    System.out.println( serviceType + ": provider list" );
-                    for ( int j = 0; j < serviceProviders.length; j++ )
-                    {
-                        String provider = serviceProviders[j];
-                        System.out.println( "        " + provider );
+            for (String serviceType : serviceTypes) {
+                String[] serviceProviders = getCryptoImpls(serviceType);
+                if (serviceProviders != null) {
+                    System.out.println(serviceType + ": provider list");
+                    for (String provider : serviceProviders) {
+                        System.out.println("        " + provider);
                     }
                 }
-                else
-                {
-                    System.out.println( serviceType + ": does not have any providers in this environment" );
+                else {
+                    System.out.println(serviceType + ": does not have any providers in this environment");
                 }
             }
         }
     }
-    // ---------------------------------------------------------------
-    // ---------------------------------------------------------------
 }

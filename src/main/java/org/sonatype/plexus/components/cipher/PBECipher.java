@@ -1,4 +1,4 @@
-/**
+/*
  * createCipher routine was adopted from http://juliusdavies.ca/svn/not-yet-commons-ssl/tags/commons-ssl-0.3.10/src/java/org/apache/commons/ssl/OpenSSL.java
  * which is distributed under APL-2.0 license: http://www.apache.org/licenses/LICENSE-2.0
  */
@@ -58,7 +58,7 @@ public class PBECipher
 
     protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
 
-    protected static int PBE_ITERATIONS = 1000;
+    protected static final int PBE_ITERATIONS = 1000;
 
     protected MessageDigest _digester;
     
@@ -234,6 +234,4 @@ public class PBECipher
         
         return cipher;
     }
-    //-------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------
 }

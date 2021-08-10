@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008 Sonatype, Inc. All rights reserved.
  *
  * This program is licensed to you under the Apache License Version 2.0,
@@ -15,7 +15,6 @@ package org.sonatype.plexus.components.cipher;
 public class PlexusCipherException
     extends Exception
 {
-
     public PlexusCipherException()
     {
     }
@@ -34,5 +33,4 @@ public class PlexusCipherException
     {
         super( message, cause );
     }
-
 }
