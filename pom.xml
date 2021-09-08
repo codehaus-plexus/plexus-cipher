@@ -14,8 +14,8 @@
   <name>Plexus Cipher: encryption/decryption Component</name>
 
   <scm>
-    <connection>scm:git:git@github.com:codehaus-plexus/plexus-cipher.git</connection>
-    <developerConnection>scm:git:git@github.com:codehaus-plexus/plexus-cipher.git</developerConnection>
+    <connection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</connection>
+    <developerConnection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</developerConnection>
     <url>http://github.com/codehaus-plexus/plexus-cipher</url>
     <tag>HEAD</tag>
   </scm>
