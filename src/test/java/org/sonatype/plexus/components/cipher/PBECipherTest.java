@@ -35,7 +35,7 @@ public class PBECipherTest
 
     String _cleatText = "veryOpenText";
 
-    String _encryptedText = "ibeHrdCOonkH7d7YnH7sarQLbwOk1ljkkM/z8hUhl4c=";
+    String _encryptedText = "F7eMV2QRQF4H0ODCA1nrTGUWacCXVvPemSjaQjGbO6U=";
 
     String _password = "testtest";
 
