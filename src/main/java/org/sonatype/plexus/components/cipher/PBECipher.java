@@ -1,9 +1,4 @@
 /*
- * createCipher routine was adopted from http://juliusdavies.ca/svn/not-yet-commons-ssl/tags/commons-ssl-0.3.10/src/java/org/apache/commons/ssl/OpenSSL.java
- * which is distributed under APL-2.0 license: http://www.apache.org/licenses/LICENSE-2.0
- */
-
-/*
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -29,10 +24,14 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -81,7 +80,7 @@ public class PBECipher
     
             byte[] salt = getSalt( SALT_SIZE );
             
-            Cipher cipher = createCipher( password.getBytes( STRING_ENCODING ), salt, Cipher.ENCRYPT_MODE  );
+            Cipher cipher = createCipher( password.toCharArray(), salt, Cipher.ENCRYPT_MODE  );
     
             byte [] encryptedBytes = cipher.doFinal( clearBytes );
             
@@ -129,7 +128,7 @@ public class PBECipher
             
             System.arraycopy( allEncryptedBytes, SALT_SIZE + 1, encryptedBytes, 0, encryptedBytes.length );
             
-            Cipher cipher = createCipher( password.getBytes( STRING_ENCODING ), salt, Cipher.DECRYPT_MODE  );
+            Cipher cipher = createCipher( password.toCharArray(), salt, Cipher.DECRYPT_MODE  );
     
             byte [] clearBytes = cipher.doFinal( encryptedBytes );
             
@@ -141,66 +140,17 @@ public class PBECipher
         }
     }
     //-------------------------------------------------------------------------------
-    private Cipher createCipher( final byte [] pwdAsBytes, byte [] salt, final int mode )
-    throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException
+    private Cipher createCipher( final char[] pwd, byte [] salt, final int mode )
+    throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, InvalidKeySpecException
     {
         MessageDigest _digester = MessageDigest.getInstance( DIGEST_ALG );
 
         byte[] keyAndIv = new byte[ SPICE_SIZE * 2 ];
-        
-        if( salt == null || salt.length == 0 )
-        {
-            // Unsalted!  Bad idea!
-            salt = null;
-        }
-        
-        byte[] result;
-        
-        int currentPos = 0;
-        
-        while (currentPos < keyAndIv.length)
-        {
-            _digester.update(pwdAsBytes);
-            
-            if (salt != null)
-            {
-                // First 8 bytes of salt ONLY!  That wasn't obvious to me
-                // when using AES encrypted private keys in "Traditional
-                // SSLeay Format".
-                //
-                // Example:
-                // DEK-Info: AES-128-CBC,8DA91D5A71988E3D4431D9C2C009F249
-                //
-                // Only the first 8 bytes are salt, but the whole thing is
-                // re-used again later as the IV.  MUCH gnashing of teeth!
-                _digester.update( salt, 0, 8 );
-            }
-            result = _digester.digest();
-            
-            int stillNeed = keyAndIv.length - currentPos;
-            
-            // Digest gave us more than we need.  Let's truncate it.
-            if (result.length > stillNeed)
-            {
-                byte[] b = new byte[stillNeed];
-                
-                System.arraycopy(result, 0, b, 0, b.length);
-                
-                result = b;
-            }
-            
-            System.arraycopy(result, 0, keyAndIv, currentPos, result.length);
-            
-            currentPos += result.length;
-            
-            if (currentPos < keyAndIv.length)
-            {
-                // Next round starts with a hash of the hash.
-                _digester.reset();
-                _digester.update(result);
-            }
-        }
 
+        KeySpec spec = new PBEKeySpec(pwd, salt, 310000, SPICE_SIZE * 16);
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        keyAndIv = factory.generateSecret(spec).getEncoded();
+        
         byte[] key = new byte[ SPICE_SIZE ];
         
         byte[] iv = new byte[ SPICE_SIZE ];
