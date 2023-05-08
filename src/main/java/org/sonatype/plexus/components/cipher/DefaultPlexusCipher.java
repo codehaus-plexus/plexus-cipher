@@ -161,7 +161,7 @@ public class DefaultPlexusCipher
                 result.add(key.substring(0, ix));
             }
         }
-        return result.toArray( new String[result.size()] );
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -189,7 +189,7 @@ public class DefaultPlexusCipher
                 }
             }
         }
-        return result.toArray( new String[result.size()] );
+        return result.toArray(new String[0]);
     }
 
     // ---------------------------------------------------------------

@@ -31,7 +31,7 @@
   </distributionManagement>
 
   <properties>
-    <javaVersion>7</javaVersion>
+    <javaVersion>8</javaVersion>
     <sisuVersion>0.3.5</sisuVersion>
     <project.build.outputTimestamp>2021-09-08T19:26:29Z</project.build.outputTimestamp>
   </properties>

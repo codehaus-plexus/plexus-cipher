@@ -83,16 +83,13 @@ public class DefaultPlexusCipherTest
         assertNotNull( "No Cipher providers found in the current environment", res );
 
         System.out.println( "\n=== Available ciphers :" );
-        for ( int i = 0; i < res.length; i++ )
-        {
-            System.out.println( res[i] );
+        for (String re : res) {
+            System.out.println(re);
         }
         System.out.println( "====================" );
 
-        for ( int i = 0; i < res.length; i++ )
-        {
-            String provider = res[i];
-            if ( PBECipher.KEY_ALG.equalsIgnoreCase( provider ) )
+        for (String provider : res) {
+            if (PBECipher.KEY_ALG.equalsIgnoreCase(provider))
                 return;
         }
 
@@ -111,18 +108,13 @@ public class DefaultPlexusCipherTest
         String[] impls = DefaultPlexusCipher.getCryptoImpls( "Cipher" );
         assertNotNull( "No Cipher providers found in the current environment", impls );
 
-        for ( int i = 0; i < impls.length; i++ )
-            try
-            {
-                String provider = impls[i];
-
-                System.out.print( provider );
-                pc.encrypt( str, passPhrase );
-                System.out.println( "------------------> Success !!!!!!" );
-            }
-            catch ( Exception e )
-            {
-                System.out.println( e.getMessage() );
+        for (String impl : impls)
+            try {
+                System.out.print(impl);
+                pc.encrypt(str, passPhrase);
+                System.out.println("------------------> Success !!!!!!");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
     }
 
