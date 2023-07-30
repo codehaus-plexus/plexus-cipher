@@ -16,8 +16,8 @@
   <scm>
     <connection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</connection>
     <developerConnection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</developerConnection>
-    <url>http://github.com/codehaus-plexus/plexus-cipher</url>
     <tag>HEAD</tag>
+    <url>http://github.com/codehaus-plexus/plexus-cipher</url>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -99,20 +99,20 @@
         <executions>
           <execution>
             <id>utf8</id>
-            <phase>test</phase>
             <goals>
               <goal>test</goal>
             </goals>
+            <phase>test</phase>
             <configuration>
               <argLine>-Dfile.encoding=utf8</argLine>
             </configuration>
           </execution>
           <execution>
             <id>iso8859-1</id>
-            <phase>test</phase>
             <goals>
               <goal>test</goal>
             </goals>
+            <phase>test</phase>
             <configuration>
               <argLine>-Dfile.encoding=iso8859-1</argLine>
             </configuration>

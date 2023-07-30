@@ -29,8 +29,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Oleg Gusakov
  */
-public class PBECipherTest
-{
+public class PBECipherTest {
     PBECipher _cipher;
 
     String _cleatText = "veryOpenText";
@@ -40,49 +39,41 @@ public class PBECipherTest
     String _password = "testtest";
 
     @Before
-    public void prepare()
-        throws Exception
-    {
+    public void prepare() throws Exception {
         _cipher = new PBECipher();
     }
 
     @Test
-    public void testEncrypt()
-        throws Exception
-    {
-        String enc = _cipher.encrypt64( _cleatText, _password );
+    public void testEncrypt() throws Exception {
+        String enc = _cipher.encrypt64(_cleatText, _password);
 
-        assertNotNull( enc );
+        assertNotNull(enc);
 
-        System.out.println( enc );
+        System.out.println(enc);
 
-        String enc2 = _cipher.encrypt64( _cleatText, _password );
+        String enc2 = _cipher.encrypt64(_cleatText, _password);
 
-        assertNotNull( enc2 );
+        assertNotNull(enc2);
 
-        System.out.println( enc2 );
+        System.out.println(enc2);
 
-        assertFalse( enc.equals( enc2 ) );
+        assertFalse(enc.equals(enc2));
     }
 
     @Test
-    public void testDecrypt()
-        throws Exception
-    {
-        String clear = _cipher.decrypt64( _encryptedText, _password );
+    public void testDecrypt() throws Exception {
+        String clear = _cipher.decrypt64(_encryptedText, _password);
 
-        assertEquals( _cleatText, clear );
+        assertEquals(_cleatText, clear);
     }
 
     @Test
-    public void testEncoding()
-    	throws Exception
-    {
-    	System.out.println("file.encoding=" + System.getProperty("file.encoding"));
-    	
-    	String pwd = "äüöÜÖÄß\"§$%&/()=?é";
-    	String encPwd = _cipher.encrypt64(pwd, pwd);
-    	String decPwd = _cipher.decrypt64(encPwd, pwd);
-    	assertEquals(pwd, decPwd);
+    public void testEncoding() throws Exception {
+        System.out.println("file.encoding=" + System.getProperty("file.encoding"));
+
+        String pwd = "äüöÜÖÄß\"§$%&/()=?é";
+        String encPwd = _cipher.encrypt64(pwd, pwd);
+        String decPwd = _cipher.decrypt64(encPwd, pwd);
+        assertEquals(pwd, decPwd);
     }
 }
