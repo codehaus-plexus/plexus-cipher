@@ -33,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 
 /**
  * This class is thread-safe.
@@ -93,9 +94,7 @@ public class PBECipher {
 
             System.arraycopy(encryptedBytes, 0, allEncryptedBytes, SALT_SIZE + 1, len);
 
-            byte[] encryptedTextBytes = Base64.encodeBase64(allEncryptedBytes);
-
-            return new String(encryptedTextBytes, STRING_ENCODING);
+            return Base64.getEncoder().encodeToString(allEncryptedBytes);
         } catch (Exception e) {
             throw new PlexusCipherException(e);
         }
@@ -104,7 +103,7 @@ public class PBECipher {
     // -------------------------------------------------------------------------------
     public String decrypt64(final String encryptedText, final String password) throws PlexusCipherException {
         try {
-            byte[] allEncryptedBytes = Base64.decodeBase64(encryptedText.getBytes());
+            byte[] allEncryptedBytes = Base64.getDecoder().decode(encryptedText.getBytes());
 
             int totalLen = allEncryptedBytes.length;
 
