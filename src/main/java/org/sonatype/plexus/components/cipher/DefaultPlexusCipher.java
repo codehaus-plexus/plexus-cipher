@@ -12,15 +12,15 @@
  */
 package org.sonatype.plexus.components.cipher;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.security.Provider;
 import java.security.Security;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.eclipse.sisu.Typed;
 
@@ -30,109 +30,86 @@ import org.eclipse.sisu.Typed;
  * @author Oleg Gusakov
  */
 @Singleton
-@Named( "default" )
-@Typed( PlexusCipher.class )
-public class DefaultPlexusCipher
-    implements PlexusCipher
-{
-    private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile( ".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*" );
+@Named("default")
+@Typed(PlexusCipher.class)
+public class DefaultPlexusCipher implements PlexusCipher {
+    private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile(".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*");
 
     private final PBECipher _cipher;
 
     // ---------------------------------------------------------------
-    public DefaultPlexusCipher()
-    {
+    public DefaultPlexusCipher() {
         _cipher = new PBECipher();
     }
 
     // ---------------------------------------------------------------
     @Override
-    public String encrypt( final String str, final String passPhrase )
-        throws PlexusCipherException
-    {
-        if ( str == null || str.length() < 1 )
-        {
+    public String encrypt(final String str, final String passPhrase) throws PlexusCipherException {
+        if (str == null || str.length() < 1) {
             return str;
         }
 
-        return _cipher.encrypt64( str, passPhrase );
+        return _cipher.encrypt64(str, passPhrase);
     }
 
     // ---------------------------------------------------------------
     @Override
-    public String encryptAndDecorate( final String str, final String passPhrase )
-        throws PlexusCipherException
-    {
-        return decorate( encrypt( str, passPhrase ) );
+    public String encryptAndDecorate(final String str, final String passPhrase) throws PlexusCipherException {
+        return decorate(encrypt(str, passPhrase));
     }
 
     // ---------------------------------------------------------------
     @Override
-    public String decrypt( final String str, final String passPhrase )
-        throws PlexusCipherException
-    {
-        if ( str == null || str.length() < 1 )
-        {
+    public String decrypt(final String str, final String passPhrase) throws PlexusCipherException {
+        if (str == null || str.length() < 1) {
             return str;
         }
 
-        return _cipher.decrypt64( str, passPhrase );
+        return _cipher.decrypt64(str, passPhrase);
     }
 
     // ---------------------------------------------------------------
     @Override
-    public String decryptDecorated( final String str, final String passPhrase )
-        throws PlexusCipherException
-    {
-        if ( str == null || str.length() < 1 )
-        {
+    public String decryptDecorated(final String str, final String passPhrase) throws PlexusCipherException {
+        if (str == null || str.length() < 1) {
             return str;
         }
 
-        if ( isEncryptedString( str ) )
-        {
-            return decrypt( unDecorate( str ), passPhrase );
+        if (isEncryptedString(str)) {
+            return decrypt(unDecorate(str), passPhrase);
         }
 
-        return decrypt( str, passPhrase );
+        return decrypt(str, passPhrase);
     }
 
     // ----------------------------------------------------------------------------
     @Override
-    public boolean isEncryptedString( final String str )
-    {
-        if ( str == null || str.length() < 1 )
-        {
+    public boolean isEncryptedString(final String str) {
+        if (str == null || str.length() < 1) {
             return false;
         }
 
-        Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher( str );
+        Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher(str);
 
         return matcher.matches() || matcher.find();
     }
 
     // ----------------------------------------------------------------------------
     @Override
-    public String unDecorate( final String str )
-        throws PlexusCipherException
-    {
-        Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher( str );
+    public String unDecorate(final String str) throws PlexusCipherException {
+        Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher(str);
 
-        if ( matcher.matches() || matcher.find() )
-        {
-            return matcher.group( 1 );
-        }
-        else
-        {
-            throw new PlexusCipherException( "default.plexus.cipher.badEncryptedPassword" );
+        if (matcher.matches() || matcher.find()) {
+            return matcher.group(1);
+        } else {
+            throw new PlexusCipherException("default.plexus.cipher.badEncryptedPassword");
         }
     }
 
     // ----------------------------------------------------------------------------
     @Override
-    public String decorate( final String str )
-    {
-        return ENCRYPTED_STRING_DECORATION_START + ( str == null ? "" : str ) + ENCRYPTED_STRING_DECORATION_STOP;
+    public String decorate(final String str) {
+        return ENCRYPTED_STRING_DECORATION_START + (str == null ? "" : str) + ENCRYPTED_STRING_DECORATION_STOP;
     }
 
     // ---------------------------------------------------------------
@@ -140,8 +117,7 @@ public class DefaultPlexusCipher
     /**
      * Exploratory part. This method returns all available services types
      */
-    public static String[] getServiceTypes()
-    {
+    public static String[] getServiceTypes() {
         Set<String> result = new HashSet<>();
 
         // All all providers
@@ -167,8 +143,7 @@ public class DefaultPlexusCipher
     /**
      * This method returns the available implementations for a service type
      */
-    public static String[] getCryptoImpls( final String serviceType )
-    {
+    public static String[] getCryptoImpls(final String serviceType) {
         Set<String> result = new HashSet<>();
 
         // All all providers
@@ -182,8 +157,7 @@ public class DefaultPlexusCipher
 
                 if (key.startsWith(serviceType + ".")) {
                     result.add(key.substring(serviceType.length() + 1));
-                }
-                else if (key.startsWith("Alg.Alias." + serviceType + ".")) {
+                } else if (key.startsWith("Alg.Alias." + serviceType + ".")) {
                     // This is an alias
                     result.add(key.substring(serviceType.length() + 11));
                 }
@@ -193,13 +167,11 @@ public class DefaultPlexusCipher
     }
 
     // ---------------------------------------------------------------
-    public static void main( final String[] args )
-    {
+    public static void main(final String[] args) {
         // Security.addProvider( new BouncyCastleProvider() );
 
         String[] serviceTypes = getServiceTypes();
-        if ( serviceTypes != null )
-        {
+        if (serviceTypes != null) {
             for (String serviceType : serviceTypes) {
                 String[] serviceProviders = getCryptoImpls(serviceType);
                 if (serviceProviders != null) {
@@ -207,8 +179,7 @@ public class DefaultPlexusCipher
                     for (String provider : serviceProviders) {
                         System.out.println("        " + provider);
                     }
-                }
-                else {
+                } else {
                     System.out.println(serviceType + ": does not have any providers in this environment");
                 }
             }
