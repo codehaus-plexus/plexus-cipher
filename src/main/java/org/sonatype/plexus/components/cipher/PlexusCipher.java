@@ -23,10 +23,10 @@ public interface PlexusCipher {
     /**
      * encrypt given string with the given passPhrase and encode it into base64
      *
-     * @param str
-     * @param passPhrase
+     * @param str       string to encrypt
+     * @param passPhrase pass phrase
      * @return encrypted str
-     * @throws PlexusCipherException
+     * @throws PlexusCipherException if encryption fails
      */
     String encrypt(String str, String passPhrase) throws PlexusCipherException;
 
@@ -34,20 +34,20 @@ public interface PlexusCipher {
      * encrypt given string with the given passPhrase, encode it into base64 and return result, wrapped into { }
      * decorations
      *
-     * @param str
-     * @param passPhrase
+     * @param str      string to encrypt
+     * @param passPhrase pass phrase
      * @return encrypted and decorated str
-     * @throws PlexusCipherException
+     * @throws PlexusCipherException if encryption fails
      */
     String encryptAndDecorate(String str, String passPhrase) throws PlexusCipherException;
 
     /**
      * decrypt given base64 encrypted string
      *
-     * @param str
-     * @param passPhrase
+     * @param str       base64 encoded string
+     * @param passPhrase     pass phrase
      * @return decrypted str
-     * @throws PlexusCipherException
+     * @throws PlexusCipherException if decryption fails
      */
     String decrypt(String str, String passPhrase) throws PlexusCipherException;
 
@@ -55,17 +55,17 @@ public interface PlexusCipher {
      * decrypt given base64 encoded encrypted string. If string is decorated, decrypt base64 encoded string inside
      * decorations
      *
-     * @param str
-     * @param passPhrase
+     * @param str    base64 encoded string
+     * @param passPhrase     pass phrase
      * @return decrypted decorated str
-     * @throws PlexusCipherException
+     * @throws PlexusCipherException if decryption fails
      */
     String decryptDecorated(String str, String passPhrase) throws PlexusCipherException;
 
     /**
      * check if given string is decorated
      *
-     * @param str
+     * @param str string to check
      * @return true if string is encrypted
      */
     boolean isEncryptedString(String str);
@@ -73,16 +73,16 @@ public interface PlexusCipher {
     /**
      * return string inside decorations
      *
-     * @param str
+     * @param str decorated string
      * @return undecorated str
-     * @throws PlexusCipherException
+     * @throws PlexusCipherException if decryption fails
      */
     String unDecorate(String str) throws PlexusCipherException;
 
     /**
      * decorated given string with { and }
      *
-     * @param str
+     * @param str string to decorate
      * @return decorated str
      */
     String decorate(String str);

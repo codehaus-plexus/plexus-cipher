@@ -146,10 +146,10 @@ public class Base64 {
     }
 
     /**
-     * Returns whether or not the <code>octect</code> is in the base 64 alphabet.
+     * Returns whether the <code>octect</code> is in the base 64 alphabet.
      *
      * @param b The value to test
-     * @return <code>true</code> if the value is defined in the the base 64 alphabet, <code>false</code> otherwise.
+     * @return <code>true</code> if the value is defined in the base 64 alphabet, <code>false</code> otherwise.
      */
     public static boolean isBase64(byte b) {
         return (b == PAD) || (b >= 0 && base64Alphabet[b] >= 0);
@@ -223,8 +223,7 @@ public class Base64 {
     }
 
     /**
-     * Decodes a byte[] containing containing
-     * characters in the Base64 alphabet.
+     * Decodes a byte[] containing characters in the Base64 alphabet.
      *
      * @param pArray A byte array containing Base64 character data
      * @return a byte array containing binary data
@@ -246,7 +245,7 @@ public class Base64 {
         int lengthDataBits = binaryData.length * EIGHTBIT;
         int fewerThan24bits = lengthDataBits % TWENTYFOURBITGROUP;
         int numberTriplets = lengthDataBits / TWENTYFOURBITGROUP;
-        byte encodedData[];
+        byte[] encodedData;
         int encodedDataLength;
         int nbrChunks = 0;
 
@@ -293,9 +292,6 @@ public class Base64 {
             byte val3 = ((b3 & SIGN) == 0) ? (byte) (b3 >> 6) : (byte) ((b3) >> 6 ^ 0xfc);
 
             encodedData[encodedIndex] = lookUpBase64Alphabet[val1];
-            // log.debug( "val2 = " + val2 );
-            // log.debug( "k4   = " + (k<<4) );
-            // log.debug(  "vak  = " + (val2 | (k<<4)) );
             encodedData[encodedIndex + 1] = lookUpBase64Alphabet[val2 | (k << 4)];
             encodedData[encodedIndex + 2] = lookUpBase64Alphabet[(l << 2) | val3];
             encodedData[encodedIndex + 3] = lookUpBase64Alphabet[b3 & 0x3f];
@@ -320,8 +316,6 @@ public class Base64 {
         if (fewerThan24bits == EIGHTBIT) {
             b1 = binaryData[dataIndex];
             k = (byte) (b1 & 0x03);
-            // log.debug("b1=" + b1);
-            // log.debug("b1<<2 = " + (b1>>2) );
             byte val1 = ((b1 & SIGN) == 0) ? (byte) (b1 >> 2) : (byte) ((b1) >> 2 ^ 0xc0);
             encodedData[encodedIndex] = lookUpBase64Alphabet[val1];
             encodedData[encodedIndex + 1] = lookUpBase64Alphabet[k << 4];
@@ -374,7 +368,7 @@ public class Base64 {
         }
 
         int numberQuadruple = base64Data.length / FOURBYTE;
-        byte decodedData[];
+        byte[] decodedData;
         byte b1, b2, b3, b4, marker0, marker1;
 
         // Throw away anything not in base64Data
@@ -432,7 +426,7 @@ public class Base64 {
      * @return The data, less whitespace (see RFC 2045).
      */
     static byte[] discardWhitespace(byte[] data) {
-        byte groomedData[] = new byte[data.length];
+        byte[] groomedData = new byte[data.length];
         int bytesCopied = 0;
 
         for (byte datum : data) {
@@ -447,7 +441,7 @@ public class Base64 {
             }
         }
 
-        byte packedData[] = new byte[bytesCopied];
+        byte[] packedData = new byte[bytesCopied];
 
         System.arraycopy(groomedData, 0, packedData, 0, bytesCopied);
 
@@ -455,16 +449,16 @@ public class Base64 {
     }
 
     /**
-     * Discards any characters outside of the base64 alphabet, per
+     * Discards any characters outside the base64 alphabet, per
      * the requirements on page 25 of RFC 2045 - "Any characters
-     * outside of the base64 alphabet are to be ignored in base64
+     * outside the base64 alphabet are to be ignored in base64
      * encoded data."
      *
      * @param data The base-64 encoded data to groom
      * @return The data, less non-base64 characters (see RFC 2045).
      */
     static byte[] discardNonBase64(byte[] data) {
-        byte groomedData[] = new byte[data.length];
+        byte[] groomedData = new byte[data.length];
         int bytesCopied = 0;
 
         for (byte datum : data) {
@@ -473,7 +467,7 @@ public class Base64 {
             }
         }
 
-        byte packedData[] = new byte[bytesCopied];
+        byte[] packedData = new byte[bytesCopied];
 
         System.arraycopy(groomedData, 0, packedData, 0, bytesCopied);
 

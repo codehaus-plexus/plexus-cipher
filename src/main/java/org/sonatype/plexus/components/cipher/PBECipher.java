@@ -133,11 +133,9 @@ public class PBECipher {
                     InvalidAlgorithmParameterException, InvalidKeySpecException {
         MessageDigest _digester = MessageDigest.getInstance(DIGEST_ALG);
 
-        byte[] keyAndIv = new byte[SPICE_SIZE * 2];
-
         KeySpec spec = new PBEKeySpec(pwd, salt, 310000, SPICE_SIZE * 16);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        keyAndIv = factory.generateSecret(spec).getEncoded();
+        byte[] keyAndIv = factory.generateSecret(spec).getEncoded();
 
         byte[] key = new byte[SPICE_SIZE];
 
