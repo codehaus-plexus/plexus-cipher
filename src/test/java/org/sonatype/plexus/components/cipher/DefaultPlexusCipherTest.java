@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test the Plexus Cipher container
@@ -30,7 +31,7 @@ public class DefaultPlexusCipherTest {
 
     final String str = "my testing phrase";
 
-    final String encStr = "LFulS0pAlmMHpDtm+81oPcqctcwpco5p4Fo7640/gqDRifCahXBefG4FxgKcu17v";
+    final String encStr = "cYrPoOelYU0HGlsn3nERAIyiLVVgnsn/KC5ZqeAPG0beOZCYrFwWwBTp3uyxt/yx";
 
     DefaultPlexusCipher pc;
 
@@ -138,10 +139,14 @@ public class DefaultPlexusCipherTest {
         }
     }
 
-    // -------------------------------------------------------------
-    public void testDecrypt() throws Exception {
-        String res = pc.decrypt(encStr, passPhrase);
-        assertEquals("Decryption did not produce desired result", str, res);
+    @Test
+    public void testDecrypt() {
+        try {
+            String res = pc.decrypt(encStr, passPhrase);
+            assertEquals("Decryption did not produce desired result", str, res);
+        } catch (Exception e) {
+            fail("Decryption failed: " + e.getMessage());
+        }
     }
 
     // -------------------------------------------------------------

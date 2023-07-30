@@ -28,7 +28,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -56,7 +55,7 @@ public class PBECipher {
 
     protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
 
-    protected static final int PBE_ITERATIONS = 1000;
+    protected static final int PBE_ITERATIONS = 310000;
 
     private static final SecureRandom _secureRandom = new SecureRandom();
 
@@ -131,9 +130,8 @@ public class PBECipher {
     private Cipher createCipher(final char[] pwd, byte[] salt, final int mode)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
                     InvalidAlgorithmParameterException, InvalidKeySpecException {
-        MessageDigest _digester = MessageDigest.getInstance(DIGEST_ALG);
 
-        KeySpec spec = new PBEKeySpec(pwd, salt, 310000, SPICE_SIZE * 16);
+        KeySpec spec = new PBEKeySpec(pwd, salt, PBE_ITERATIONS, SPICE_SIZE * 16);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] keyAndIv = factory.generateSecret(spec).getEncoded();
 
