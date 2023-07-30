@@ -120,9 +120,8 @@ public class DefaultPlexusCipher implements PlexusCipher {
     public static String[] getServiceTypes() {
         Set<String> result = new HashSet<>();
 
-        // All all providers
-        Provider[] providers = Security.getProviders();
-        for (Provider provider : providers) {
+        // All providers
+        for (Provider provider : Security.getProviders()) {
             // Get services provided by each provider
             Set<Object> keys = provider.keySet();
             for (Object o : keys) {
@@ -146,7 +145,7 @@ public class DefaultPlexusCipher implements PlexusCipher {
     public static String[] getCryptoImpls(final String serviceType) {
         Set<String> result = new HashSet<>();
 
-        // All all providers
+        // All providers
         Provider[] providers = Security.getProviders();
         for (Provider provider : providers) {
             // Get services provided by each provider
@@ -168,20 +167,11 @@ public class DefaultPlexusCipher implements PlexusCipher {
 
     // ---------------------------------------------------------------
     public static void main(final String[] args) {
-        // Security.addProvider( new BouncyCastleProvider() );
-
         String[] serviceTypes = getServiceTypes();
-        if (serviceTypes != null) {
-            for (String serviceType : serviceTypes) {
-                String[] serviceProviders = getCryptoImpls(serviceType);
-                if (serviceProviders != null) {
-                    System.out.println(serviceType + ": provider list");
-                    for (String provider : serviceProviders) {
-                        System.out.println("        " + provider);
-                    }
-                } else {
-                    System.out.println(serviceType + ": does not have any providers in this environment");
-                }
+        for (String serviceType : serviceTypes) {
+            System.out.println(serviceType + ": provider list");
+            for (String provider : getCryptoImpls(serviceType)) {
+                System.out.println("        " + provider);
             }
         }
     }

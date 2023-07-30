@@ -28,15 +28,15 @@ import static org.junit.Assert.assertTrue;
 public class DefaultPlexusCipherTest {
     private final String passPhrase = "testtest";
 
-    String str = "my testing phrase";
+    final String str = "my testing phrase";
 
-    String encStr = "LFulS0pAlmMHpDtm+81oPcqctcwpco5p4Fo7640/gqDRifCahXBefG4FxgKcu17v";
+    final String encStr = "LFulS0pAlmMHpDtm+81oPcqctcwpco5p4Fo7640/gqDRifCahXBefG4FxgKcu17v";
 
     DefaultPlexusCipher pc;
 
     // -------------------------------------------------------------
     @Before
-    public void prepare() throws Exception {
+    public void prepare() {
         pc = new DefaultPlexusCipher();
     }
 
@@ -90,7 +90,7 @@ public class DefaultPlexusCipherTest {
     // -------------------------------------------------------------
 
     @Test
-    public void stestFindDefaultAlgorithm() throws Exception {
+    public void stestFindDefaultAlgorithm() {
         String[] res = DefaultPlexusCipher.getServiceTypes();
         assertNotNull("No service types found in the current environment", res);
 
@@ -108,7 +108,6 @@ public class DefaultPlexusCipherTest {
     }
 
     // -------------------------------------------------------------
-
     @Test
     public void testEncrypt() throws Exception {
         String xRes = pc.encrypt(str, passPhrase);
@@ -124,18 +123,16 @@ public class DefaultPlexusCipherTest {
 
     @Test
     public void testEncryptVariableLengths() throws Exception {
-        String xRes = null;
-        String res = null;
         String pass = "g";
 
         for (int i = 0; i < 64; i++) {
             pass = pass + 'a';
 
-            xRes = pc.encrypt(str, pass);
+            String xRes = pc.encrypt(str, pass);
 
             System.out.println(pass.length() + ": " + xRes);
 
-            res = pc.decrypt(xRes, pass);
+            String res = pc.decrypt(xRes, pass);
 
             assertEquals("Encryption/Decryption did not produce desired result", str, res);
         }
@@ -150,7 +147,7 @@ public class DefaultPlexusCipherTest {
     // -------------------------------------------------------------
 
     @Test
-    public void testDecorate() throws Exception {
+    public void testDecorate() {
         String res = pc.decorate("aaa");
         assertEquals(
                 "Decoration failed",

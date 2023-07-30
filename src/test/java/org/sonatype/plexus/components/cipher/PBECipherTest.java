@@ -23,48 +23,48 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Oleg Gusakov
  */
 public class PBECipherTest {
-    PBECipher _cipher;
+    PBECipher pbeCipher;
 
-    String _cleatText = "veryOpenText";
+    final String clearText = "veryOpenText";
 
-    String _encryptedText = "F7eMV2QRQF4H0ODCA1nrTGUWacCXVvPemSjaQjGbO6U=";
+    final String encryptedText = "F7eMV2QRQF4H0ODCA1nrTGUWacCXVvPemSjaQjGbO6U=";
 
-    String _password = "testtest";
+    final String password = "testtest";
 
     @Before
-    public void prepare() throws Exception {
-        _cipher = new PBECipher();
+    public void prepare() {
+        pbeCipher = new PBECipher();
     }
 
     @Test
     public void testEncrypt() throws Exception {
-        String enc = _cipher.encrypt64(_cleatText, _password);
+        String enc = pbeCipher.encrypt64(clearText, password);
 
         assertNotNull(enc);
 
         System.out.println(enc);
 
-        String enc2 = _cipher.encrypt64(_cleatText, _password);
+        String enc2 = pbeCipher.encrypt64(clearText, password);
 
         assertNotNull(enc2);
 
         System.out.println(enc2);
 
-        assertFalse(enc.equals(enc2));
+        assertNotEquals(enc, enc2);
     }
 
     @Test
     public void testDecrypt() throws Exception {
-        String clear = _cipher.decrypt64(_encryptedText, _password);
+        String clear = pbeCipher.decrypt64(encryptedText, password);
 
-        assertEquals(_cleatText, clear);
+        assertEquals(clearText, clear);
     }
 
     @Test
@@ -72,8 +72,8 @@ public class PBECipherTest {
         System.out.println("file.encoding=" + System.getProperty("file.encoding"));
 
         String pwd = "äüöÜÖÄß\"§$%&/()=?é";
-        String encPwd = _cipher.encrypt64(pwd, pwd);
-        String decPwd = _cipher.decrypt64(encPwd, pwd);
+        String encPwd = pbeCipher.encrypt64(pwd, pwd);
+        String decPwd = pbeCipher.decrypt64(encPwd, pwd);
         assertEquals(pwd, decPwd);
     }
 }
