@@ -31,7 +31,6 @@
   </distributionManagement>
 
   <properties>
-    <sisuVersion>0.3.5</sisuVersion>
     <project.build.outputTimestamp>2021-09-08T19:26:29Z</project.build.outputTimestamp>
   </properties>
 
@@ -44,7 +43,7 @@
     <dependency>
       <groupId>org.eclipse.sisu</groupId>
       <artifactId>org.eclipse.sisu.inject</artifactId>
-      <version>${sisuVersion}</version>
+      <version>${sisuMavenPluginVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
