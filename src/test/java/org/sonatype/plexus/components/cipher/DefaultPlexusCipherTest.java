@@ -12,37 +12,35 @@
  */
 package org.sonatype.plexus.components.cipher;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the Plexus Cipher container
  *
  * @author Oleg Gusakov
  */
-public class DefaultPlexusCipherTest {
+class DefaultPlexusCipherTest {
     private final String passPhrase = "testtest";
 
     final String str = "my testing phrase";
 
     final String encStr = "cYrPoOelYU0HGlsn3nERAIyiLVVgnsn/KC5ZqeAPG0beOZCYrFwWwBTp3uyxt/yx";
+    PlexusCipher pc;
 
-    DefaultPlexusCipher pc;
-
-    // -------------------------------------------------------------
-    @Before
-    public void prepare() {
+    @BeforeEach
+    void prepare() {
         pc = new DefaultPlexusCipher();
     }
 
     @Test
-    public void testIsEncryptedString() {
+    void testIsEncryptedString() {
         String noBraces = "This is a test";
         String normalBraces = "Comment {This is a test} other comment with a: }";
         String escapedBraces = "\\{This is a test\\}";
@@ -58,7 +56,7 @@ public class DefaultPlexusCipherTest {
     }
 
     @Test
-    public void testUnDecorate_BracesPermutations() throws PlexusCipherException {
+    void testUnDecorate_BracesPermutations() throws PlexusCipherException {
         String noBraces = "This is a test";
         String normalBraces = "Comment {This is a test} other comment with a: }";
         String mixedBraces = "Comment {foo\\{This is a test\\}} other comment with a: }";
@@ -71,9 +69,9 @@ public class DefaultPlexusCipherTest {
     // -------------------------------------------------------------
 
     @Test
-    public void testDefaultAlgorithmExists() throws Exception {
+    void testDefaultAlgorithmExists() throws Exception {
         String[] res = DefaultPlexusCipher.getCryptoImpls("Cipher");
-        assertNotNull("No Cipher providers found in the current environment", res);
+        assertNotNull(res, "No Cipher providers found in the current environment");
 
         System.out.println("\n=== Available ciphers :");
         for (String re : res) {
@@ -91,12 +89,12 @@ public class DefaultPlexusCipherTest {
     // -------------------------------------------------------------
 
     @Test
-    public void stestFindDefaultAlgorithm() {
+    void stestFindDefaultAlgorithm() {
         String[] res = DefaultPlexusCipher.getServiceTypes();
-        assertNotNull("No service types found in the current environment", res);
+        assertNotNull(res, "No service types found in the current environment");
 
         String[] impls = DefaultPlexusCipher.getCryptoImpls("Cipher");
-        assertNotNull("No Cipher providers found in the current environment", impls);
+        assertNotNull(impls, "No Cipher providers found in the current environment");
 
         for (String impl : impls)
             try {
@@ -110,20 +108,20 @@ public class DefaultPlexusCipherTest {
 
     // -------------------------------------------------------------
     @Test
-    public void testEncrypt() throws Exception {
+    void testEncrypt() throws Exception {
         String xRes = pc.encrypt(str, passPhrase);
 
         System.out.println(xRes);
 
         String res = pc.decrypt(xRes, passPhrase);
 
-        assertEquals("Encryption/Decryption did not produce desired result", str, res);
+        assertEquals(str, res, "Encryption/Decryption did not produce desired result");
     }
 
     // -------------------------------------------------------------
 
     @Test
-    public void testEncryptVariableLengths() throws Exception {
+    void testEncryptVariableLengths() throws Exception {
         String pass = "g";
 
         for (int i = 0; i < 64; i++) {
@@ -135,44 +133,44 @@ public class DefaultPlexusCipherTest {
 
             String res = pc.decrypt(xRes, pass);
 
-            assertEquals("Encryption/Decryption did not produce desired result", str, res);
+            assertEquals(str, res, "Encryption/Decryption did not produce desired result");
         }
     }
 
     @Test
-    public void testDecrypt() {
-        try {
-            String res = pc.decrypt(encStr, passPhrase);
-            assertEquals("Decryption did not produce desired result", str, res);
-        } catch (Exception e) {
-            fail("Decryption failed: " + e.getMessage());
-        }
+    void testDecrypt() {
+        assertDoesNotThrow(
+                () -> {
+                    String res = pc.decrypt(encStr, passPhrase);
+                    assertEquals(str, res, "Decryption did not produce desired result");
+                },
+                "Decryption failed: ");
     }
 
     // -------------------------------------------------------------
 
     @Test
-    public void testDecorate() {
+    void testDecorate() {
         String res = pc.decorate("aaa");
         assertEquals(
-                "Decoration failed",
                 PlexusCipher.ENCRYPTED_STRING_DECORATION_START + "aaa" + PlexusCipher.ENCRYPTED_STRING_DECORATION_STOP,
-                res);
+                res,
+                "Decoration failed");
     }
 
     // -------------------------------------------------------------
 
     @Test
-    public void testUnDecorate() throws Exception {
+    void testUnDecorate() throws Exception {
         String res = pc.unDecorate(
                 PlexusCipher.ENCRYPTED_STRING_DECORATION_START + "aaa" + PlexusCipher.ENCRYPTED_STRING_DECORATION_STOP);
-        assertEquals("Decoration failed", "aaa", res);
+        assertEquals("aaa", res, "Decoration failed");
     }
 
     // -------------------------------------------------------------
 
     @Test
-    public void testEncryptAndDecorate() throws Exception {
+    void testEncryptAndDecorate() throws Exception {
         String res = pc.encryptAndDecorate("my-password", "12345678");
 
         assertEquals('{', res.charAt(0));

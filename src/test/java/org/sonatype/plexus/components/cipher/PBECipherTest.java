@@ -19,17 +19,17 @@ under the License.
 
 package org.sonatype.plexus.components.cipher;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Oleg Gusakov
  */
-public class PBECipherTest {
+class PBECipherTest {
     PBECipher pbeCipher;
 
     final String clearText = "veryOpenText";
@@ -38,13 +38,13 @@ public class PBECipherTest {
 
     final String password = "testtest";
 
-    @Before
-    public void prepare() {
+    @BeforeEach
+    void prepare() {
         pbeCipher = new PBECipher();
     }
 
     @Test
-    public void testEncrypt() throws Exception {
+    void testEncrypt() throws Exception {
         String enc = pbeCipher.encrypt64(clearText, password);
 
         assertNotNull(enc);
@@ -61,14 +61,14 @@ public class PBECipherTest {
     }
 
     @Test
-    public void testDecrypt() throws Exception {
+    void testDecrypt() throws Exception {
         String clear = pbeCipher.decrypt64(encryptedText, password);
 
         assertEquals(clearText, clear);
     }
 
     @Test
-    public void testEncoding() throws Exception {
+    void testEncoding() throws Exception {
         System.out.println("file.encoding=" + System.getProperty("file.encoding"));
 
         String pwd = "äüöÜÖÄß\"§$%&/()=?é";
