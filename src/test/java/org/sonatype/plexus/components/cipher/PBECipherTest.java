@@ -34,7 +34,7 @@ class PBECipherTest {
 
     final String clearText = "veryOpenText";
 
-    final String encryptedText = "F7eMV2QRQF4H0ODCA1nrTGUWacCXVvPemSjaQjGbO6U=";
+    final String encryptedText = "0bzCbTRh5YQHZ2p7hkr6OZYrfhRqwc9ImgtYweX752k=";
 
     final String password = "testtest";
 

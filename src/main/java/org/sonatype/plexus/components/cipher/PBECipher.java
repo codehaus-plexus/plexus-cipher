@@ -95,7 +95,7 @@ public class PBECipher {
 
             return Base64.getEncoder().encodeToString(allEncryptedBytes);
         } catch (Exception e) {
-            throw new PlexusCipherException(e);
+            throw new PlexusCipherException(e.getMessage(), e);
         }
     }
 
@@ -122,7 +122,7 @@ public class PBECipher {
 
             return new String(clearBytes, STRING_ENCODING);
         } catch (Exception e) {
-            throw new PlexusCipherException(e);
+            throw new PlexusCipherException(e.getMessage(), e);
         }
     }
     // -------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ public class PBECipher {
                     InvalidAlgorithmParameterException, InvalidKeySpecException {
 
         KeySpec spec = new PBEKeySpec(pwd, salt, PBE_ITERATIONS, SPICE_SIZE * 16);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
         byte[] keyAndIv = factory.generateSecret(spec).getEncoded();
 
         byte[] key = new byte[SPICE_SIZE];

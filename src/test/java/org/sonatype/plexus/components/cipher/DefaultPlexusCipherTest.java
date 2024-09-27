@@ -13,6 +13,7 @@
 package org.sonatype.plexus.components.cipher;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -31,7 +32,7 @@ class DefaultPlexusCipherTest {
 
     final String str = "my testing phrase";
 
-    final String encStr = "cYrPoOelYU0HGlsn3nERAIyiLVVgnsn/KC5ZqeAPG0beOZCYrFwWwBTp3uyxt/yx";
+    final String encStr = "t4RzIMd8AT0H3xnTd5IBX9zKE94G+D29fGBuhAJ4RblNC5zJLqYOIkVaSXJQFT7t";
     PlexusCipher pc;
 
     @BeforeEach
@@ -88,6 +89,7 @@ class DefaultPlexusCipherTest {
 
     // -------------------------------------------------------------
 
+    @Disabled("This test is not really a test")
     @Test
     void stestFindDefaultAlgorithm() {
         String[] res = DefaultPlexusCipher.getServiceTypes();
