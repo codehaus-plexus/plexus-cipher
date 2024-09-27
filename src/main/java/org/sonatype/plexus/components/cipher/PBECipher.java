@@ -22,10 +22,12 @@ package org.sonatype.plexus.components.cipher;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -40,24 +42,13 @@ import java.util.Base64;
  * @author Oleg Gusakov
  */
 public class PBECipher {
-    protected static final String STRING_ENCODING = "UTF8";
-
+    protected static final Charset STRING_ENCODING = StandardCharsets.UTF_8;
     protected static final int SPICE_SIZE = 16;
-
     protected static final int SALT_SIZE = 8;
-
     protected static final int CHUNK_SIZE = 16;
-
-    protected static final byte WIPER = 0;
-
-    protected static final String DIGEST_ALG = "SHA-256";
-
     protected static final String KEY_ALG = "AES";
-
-    protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
-
+    protected static final String CIPHER_ALG = "AES/GCM/NoPadding";
     protected static final int PBE_ITERATIONS = 310000;
-
     private static final SecureRandom _secureRandom = new SecureRandom();
 
     // ---------------------------------------------------------------
@@ -144,7 +135,7 @@ public class PBECipher {
 
         Cipher cipher = Cipher.getInstance(CIPHER_ALG);
 
-        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new IvParameterSpec(iv));
+        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new GCMParameterSpec(128, iv));
 
         return cipher;
     }
