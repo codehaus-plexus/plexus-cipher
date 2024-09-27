@@ -17,7 +17,7 @@ specific language governing permissions and limitations
 under the License.
  */
 
-package org.codehaus.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -35,6 +35,8 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+
+import org.codehaus.plexus.components.cipher.PlexusCipherException;
 
 /**
  * This class is thread-safe.

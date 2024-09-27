@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.codehaus.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.codehaus.plexus.components.cipher.PlexusCipher;
+import org.codehaus.plexus.components.cipher.PlexusCipherException;
+
 /**
  * Default implementation of {@link PlexusCipher}. This class is thread safe.
  *
@@ -31,6 +34,8 @@ import java.util.regex.Pattern;
 @Named
 public class DefaultPlexusCipher implements PlexusCipher {
     private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile(".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*");
+    private static final String ENCRYPTED_STRING_DECORATION_START = "{";
+    private static final String ENCRYPTED_STRING_DECORATION_STOP = "}";
 
     private final PBECipher _cipher;
 

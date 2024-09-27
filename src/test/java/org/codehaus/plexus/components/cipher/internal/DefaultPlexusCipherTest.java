@@ -10,8 +10,10 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.codehaus.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
+import org.codehaus.plexus.components.cipher.PlexusCipher;
+import org.codehaus.plexus.components.cipher.PlexusCipherException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -154,18 +156,14 @@ class DefaultPlexusCipherTest {
     @Test
     void testDecorate() {
         String res = pc.decorate("aaa");
-        assertEquals(
-                PlexusCipher.ENCRYPTED_STRING_DECORATION_START + "aaa" + PlexusCipher.ENCRYPTED_STRING_DECORATION_STOP,
-                res,
-                "Decoration failed");
+        assertEquals("{aaa}", res, "Decoration failed");
     }
 
     // -------------------------------------------------------------
 
     @Test
     void testUnDecorate() throws Exception {
-        String res = pc.unDecorate(
-                PlexusCipher.ENCRYPTED_STRING_DECORATION_START + "aaa" + PlexusCipher.ENCRYPTED_STRING_DECORATION_STOP);
+        String res = pc.unDecorate("{aaa}");
         assertEquals("aaa", res, "Decoration failed");
     }
 

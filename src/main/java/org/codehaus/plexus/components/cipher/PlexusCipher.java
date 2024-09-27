@@ -16,10 +16,6 @@ package org.codehaus.plexus.components.cipher;
  * @author Oleg Gusakov
  */
 public interface PlexusCipher {
-    String ENCRYPTED_STRING_DECORATION_START = "{";
-
-    String ENCRYPTED_STRING_DECORATION_STOP = "}";
-
     /**
      * encrypt given string with the given passPhrase and encode it into base64
      *
