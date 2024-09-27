@@ -17,7 +17,7 @@ specific language governing permissions and limitations
 under the License.
  */
 
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
