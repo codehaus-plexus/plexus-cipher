@@ -31,7 +31,6 @@
   </distributionManagement>
 
   <properties>
-    <javaVersion>17</javaVersion>
     <project.build.outputTimestamp>2023-10-21T21:30:57Z</project.build.outputTimestamp>
   </properties>
 
