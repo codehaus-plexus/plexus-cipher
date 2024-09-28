@@ -39,12 +39,11 @@ class DefaultPlexusCipherTest {
     final String str = "my testing phrase";
     PlexusCipher pc;
 
-    static String[] ALG = new String[] {AESCBCPKCS5Padding.CIPHER_ALG, AESGCMNoPadding.CIPHER_ALG};
+    static String[] ALG = new String[] {AESGCMNoPadding.CIPHER_ALG};
 
     @BeforeEach
     void prepare() {
         HashMap<String, Cipher> ciphers = new HashMap<>();
-        ciphers.put(AESCBCPKCS5Padding.CIPHER_ALG, new AESGCMNoPadding());
         ciphers.put(AESGCMNoPadding.CIPHER_ALG, new AESGCMNoPadding());
         pc = new DefaultPlexusCipher(ciphers);
     }
@@ -86,9 +85,6 @@ class DefaultPlexusCipherTest {
         // }
         // System.out.println("====================");
         HashSet<String> algs = new HashSet<>(pc.availableCiphers());
-        // TODO: seems this alg is not offered by default?
-        algs.remove(AESCBCPKCS5Padding.CIPHER_ALG);
-
         for (String provider : res) {
             algs.remove(provider);
         }
