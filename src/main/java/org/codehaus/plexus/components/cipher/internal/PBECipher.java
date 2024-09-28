@@ -22,7 +22,7 @@ package org.codehaus.plexus.components.cipher.internal;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -49,7 +49,7 @@ public class PBECipher {
     protected static final int SALT_SIZE = 8;
     protected static final int CHUNK_SIZE = 16;
     protected static final String KEY_ALG = "AES";
-    protected static final String CIPHER_ALG = "AES/GCM/NoPadding";
+    protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
     protected static final int PBE_ITERATIONS = 310000;
     private static final SecureRandom _secureRandom = new SecureRandom();
 
@@ -137,7 +137,7 @@ public class PBECipher {
 
         Cipher cipher = Cipher.getInstance(CIPHER_ALG);
 
-        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new GCMParameterSpec(128, iv));
+        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new IvParameterSpec(iv));
 
         return cipher;
     }

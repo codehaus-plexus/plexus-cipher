@@ -34,7 +34,7 @@ class DefaultPlexusCipherTest {
 
     final String str = "my testing phrase";
 
-    final String encStr = "cQupsZrOFpkGa7Ce/vdwr3a0Zun/X5VHsqXhnZOnhKB6VtTu7mfyI5gtycUsG3Fy";
+    final String encStr = "RRvejxJ+wksH/kWnYfun/GeFoPKh6JHcA2dmxMOIraZiIuLISplmdyvl2Sq04rpP";
     PlexusCipher pc;
 
     @BeforeEach
