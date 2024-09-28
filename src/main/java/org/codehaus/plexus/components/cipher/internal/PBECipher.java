@@ -22,7 +22,7 @@ package org.codehaus.plexus.components.cipher.internal;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -49,7 +49,7 @@ public class PBECipher {
     protected static final int SALT_SIZE = 8;
     protected static final int CHUNK_SIZE = 16;
     protected static final String KEY_ALG = "AES";
-    protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
+    protected static final String CIPHER_ALG = "AES/GCM/NoPadding";
     protected static final int PBE_ITERATIONS = 310000;
     private static final SecureRandom _secureRandom = new SecureRandom();
 
@@ -84,7 +84,8 @@ public class PBECipher {
 
             allEncryptedBytes[SALT_SIZE] = padLen;
 
-            System.arraycopy(encryptedBytes, 0, allEncryptedBytes, SALT_SIZE + 1, len);
+            System.arraycopy(iv, 0, allEncryptedBytes, SALT_SIZE + 1, iv.length);
+            System.arraycopy(encryptedBytes, 0, allEncryptedBytes, SALT_SIZE + 1 + iv.length, len);
 
             return Base64.getEncoder().encodeToString(allEncryptedBytes);
         } catch (Exception e) {
@@ -105,9 +106,12 @@ public class PBECipher {
 
             byte padLen = allEncryptedBytes[SALT_SIZE];
 
-            byte[] encryptedBytes = new byte[totalLen - SALT_SIZE - 1 - padLen];
+            byte[] iv = new byte[12]; // GCM standard nonce size
+            System.arraycopy(allEncryptedBytes, SALT_SIZE + 1, iv, 0, iv.length);
 
-            System.arraycopy(allEncryptedBytes, SALT_SIZE + 1, encryptedBytes, 0, encryptedBytes.length);
+            byte[] encryptedBytes = new byte[totalLen - SALT_SIZE - 1 - iv.length];
+
+            System.arraycopy(allEncryptedBytes, SALT_SIZE + 1 + iv.length, encryptedBytes, 0, encryptedBytes.length);
 
             Cipher cipher = createCipher(password.toCharArray(), salt, Cipher.DECRYPT_MODE);
 
@@ -129,15 +133,15 @@ public class PBECipher {
 
         byte[] key = new byte[SPICE_SIZE];
 
-        byte[] iv = new byte[SPICE_SIZE];
+        byte[] iv = new byte[12]; // GCM standard nonce size
+        _secureRandom.nextBytes(iv); // Generate a random nonce
 
         System.arraycopy(keyAndIv, 0, key, 0, key.length);
 
-        System.arraycopy(keyAndIv, key.length, iv, 0, iv.length);
-
         Cipher cipher = Cipher.getInstance(CIPHER_ALG);
 
-        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new IvParameterSpec(iv));
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv); // 128-bit authentication tag length
+        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), gcmSpec);
 
         return cipher;
     }
