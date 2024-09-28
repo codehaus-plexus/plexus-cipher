@@ -9,14 +9,14 @@
   </parent>
 
   <artifactId>plexus-cipher</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0</version>
 
   <name>Plexus Cipher: encryption/decryption Component</name>
 
   <scm>
     <connection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</connection>
     <developerConnection>scm:git:git@github.com:codehaus-plexus/plexus-cipher.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>plexus-cipher-3.0.0</tag>
     <url>http://github.com/codehaus-plexus/plexus-cipher</url>
   </scm>
   <issueManagement>
@@ -31,7 +31,7 @@
   </distributionManagement>
 
   <properties>
-    <project.build.outputTimestamp>2023-10-21T21:30:57Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2024-09-28T18:22:28Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
