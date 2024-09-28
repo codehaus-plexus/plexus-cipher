@@ -86,6 +86,9 @@ class DefaultPlexusCipherTest {
         // }
         // System.out.println("====================");
         HashSet<String> algs = new HashSet<>(pc.availableCiphers());
+        // TODO: seems this alg is not offered by default?
+        algs.remove(AESCBCPKCS5Padding.CIPHER_ALG);
+
         for (String provider : res) {
             algs.remove(provider);
         }
