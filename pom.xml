@@ -15,7 +15,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</connection>
-    <developerConnection>scm:git:https://github.com/codehaus-plexus/plexus-cipher.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:codehaus-plexus/plexus-cipher.git</developerConnection>
     <tag>HEAD</tag>
     <url>http://github.com/codehaus-plexus/plexus-cipher</url>
   </scm>
