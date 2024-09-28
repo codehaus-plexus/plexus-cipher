@@ -12,18 +12,23 @@
  */
 package org.codehaus.plexus.components.cipher.internal;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import java.security.Provider;
 import java.security.Security;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.codehaus.plexus.components.cipher.PlexusCipher;
 import org.codehaus.plexus.components.cipher.PlexusCipherException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Default implementation of {@link PlexusCipher}. This class is thread safe.
@@ -33,72 +38,75 @@ import org.codehaus.plexus.components.cipher.PlexusCipherException;
 @Singleton
 @Named
 public class DefaultPlexusCipher implements PlexusCipher {
-    private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile(".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*");
+    private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile(".*?[^\\\\]?\\{(.*?[^\\\\])}.*");
     private static final String ENCRYPTED_STRING_DECORATION_START = "{";
     private static final String ENCRYPTED_STRING_DECORATION_STOP = "}";
 
-    private final PBECipher _cipher;
+    private final Map<String, Cipher> ciphers;
 
-    // ---------------------------------------------------------------
-    public DefaultPlexusCipher() {
-        _cipher = new PBECipher();
+    @Inject
+    public DefaultPlexusCipher(Map<String, Cipher> ciphers) {
+        this.ciphers = requireNonNull(ciphers);
     }
 
-    // ---------------------------------------------------------------
     @Override
-    public String encrypt(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.isEmpty()) {
+    public Set<String> availableCiphers() {
+        return Collections.unmodifiableSet(ciphers.keySet());
+    }
+
+    @Override
+    public String encrypt(String alg, String str, String passPhrase) throws PlexusCipherException {
+        requireNonNull(alg);
+        requireNonNull(str);
+        requireNonNull(passPhrase);
+        if (str.isEmpty()) {
             return str;
         }
-
-        return _cipher.encrypt64(str, passPhrase);
+        return requireCipher(alg).encrypt(str, passPhrase);
     }
 
-    // ---------------------------------------------------------------
     @Override
-    public String encryptAndDecorate(final String str, final String passPhrase) throws PlexusCipherException {
-        return decorate(encrypt(str, passPhrase));
+    public String encryptAndDecorate(String alg, String str, String passPhrase) throws PlexusCipherException {
+        return decorate(encrypt(alg, str, passPhrase));
     }
 
-    // ---------------------------------------------------------------
     @Override
-    public String decrypt(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.isEmpty()) {
+    public String decrypt(String alg, String str, String passPhrase) throws PlexusCipherException {
+        requireNonNull(alg);
+        requireNonNull(str);
+        requireNonNull(passPhrase);
+        if (str.isEmpty()) {
             return str;
         }
-
-        return _cipher.decrypt64(str, passPhrase);
+        return requireCipher(alg).decrypt(str, passPhrase);
     }
 
-    // ---------------------------------------------------------------
     @Override
-    public String decryptDecorated(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.isEmpty()) {
+    public String decryptDecorated(String alg, String str, String passPhrase) throws PlexusCipherException {
+        requireNonNull(alg);
+        requireNonNull(str);
+        requireNonNull(passPhrase);
+        if (str.isEmpty()) {
             return str;
         }
-
         if (isEncryptedString(str)) {
-            return decrypt(unDecorate(str), passPhrase);
+            str = unDecorate(str);
         }
-
-        return decrypt(str, passPhrase);
+        return decrypt(alg, str, passPhrase);
     }
 
-    // ----------------------------------------------------------------------------
     @Override
-    public boolean isEncryptedString(final String str) {
+    public boolean isEncryptedString(String str) {
         if (str == null || str.isEmpty()) {
             return false;
         }
-
         Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher(str);
-
         return matcher.matches() || matcher.find();
     }
 
-    // ----------------------------------------------------------------------------
     @Override
-    public String unDecorate(final String str) throws PlexusCipherException {
+    public String unDecorate(String str) throws PlexusCipherException {
+        requireNonNull(str);
         Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher(str);
         if (matcher.matches() || matcher.find()) {
             return matcher.group(1);
@@ -107,10 +115,17 @@ public class DefaultPlexusCipher implements PlexusCipher {
         }
     }
 
-    // ----------------------------------------------------------------------------
     @Override
-    public String decorate(final String str) {
+    public String decorate(String str) {
         return ENCRYPTED_STRING_DECORATION_START + (str == null ? "" : str) + ENCRYPTED_STRING_DECORATION_STOP;
+    }
+
+    private Cipher requireCipher(String alg) throws PlexusCipherException {
+        Cipher cipher = ciphers.get(alg);
+        if (cipher == null) {
+            throw new PlexusCipherException("Unsupported alg: " + alg);
+        }
+        return cipher;
     }
 
     // ---------------------------------------------------------------
@@ -166,7 +181,6 @@ public class DefaultPlexusCipher implements PlexusCipher {
         return result.toArray(new String[0]);
     }
 
-    // ---------------------------------------------------------------
     public static void main(final String[] args) {
         String[] serviceTypes = getServiceTypes();
         for (String serviceType : serviceTypes) {

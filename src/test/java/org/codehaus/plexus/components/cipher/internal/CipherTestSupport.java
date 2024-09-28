@@ -19,6 +19,8 @@ under the License.
 
 package org.codehaus.plexus.components.cipher.internal;
 
+import java.nio.charset.Charset;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,54 +28,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * @author Oleg Gusakov
- */
-class PBECipherTest {
-    PBECipher pbeCipher;
-
+public abstract class CipherTestSupport {
     final String clearText = "veryOpenText";
-
-    final String encryptedText = "xnQ1RvJFoJsHoTZKyv76ej3XTGKt99ShUt/kPv4yHjw=";
-
     final String password = "testtest";
+
+    Cipher pbeCipher;
 
     @BeforeEach
     void prepare() {
-        pbeCipher = new PBECipher();
+        pbeCipher = getCipher();
     }
+
+    abstract Cipher getCipher();
 
     @Test
     void testEncrypt() throws Exception {
-        String enc = pbeCipher.encrypt64(clearText, password);
-
+        String enc = pbeCipher.encrypt(clearText, password);
         assertNotNull(enc);
-
         System.out.println(enc);
-
-        String enc2 = pbeCipher.encrypt64(clearText, password);
-
+        String enc2 = pbeCipher.encrypt(clearText, password);
         assertNotNull(enc2);
-
         System.out.println(enc2);
-
         assertNotEquals(enc, enc2);
     }
 
     @Test
     void testDecrypt() throws Exception {
-        String clear = pbeCipher.decrypt64(encryptedText, password);
-
+        String enc = pbeCipher.encrypt(clearText, password);
+        String clear = pbeCipher.decrypt(enc, password);
         assertEquals(clearText, clear);
     }
 
     @Test
     void testEncoding() throws Exception {
-        System.out.println("file.encoding=" + System.getProperty("file.encoding"));
-
+        System.out.println("file.encoding=" + Charset.defaultCharset().displayName());
         String pwd = "äüöÜÖÄß\"§$%&/()=?é";
-        String encPwd = pbeCipher.encrypt64(pwd, pwd);
-        String decPwd = pbeCipher.decrypt64(encPwd, pwd);
+        String encPwd = pbeCipher.encrypt(pwd, pwd);
+        String decPwd = pbeCipher.decrypt(encPwd, pwd);
         assertEquals(pwd, decPwd);
     }
 }
