@@ -92,13 +92,13 @@ public class AESGCMNoPadding implements org.codehaus.plexus.components.cipher.in
         }
     }
 
-    public static byte[] getRandomNonce(int numBytes) throws NoSuchAlgorithmException {
+    private static byte[] getRandomNonce(int numBytes) throws NoSuchAlgorithmException {
         byte[] nonce = new byte[numBytes];
         SecureRandom.getInstanceStrong().nextBytes(nonce);
         return nonce;
     }
 
-    public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
+    private static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance(KEY_FACTORY);
         KeySpec spec = new PBEKeySpec(password, salt, PBE_ITERATIONS, PBE_KEY_SIZE);
