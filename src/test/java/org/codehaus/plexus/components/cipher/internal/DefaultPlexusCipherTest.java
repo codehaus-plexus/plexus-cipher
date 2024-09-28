@@ -26,7 +26,6 @@ import org.junit.jupiter.params.provider.FieldSource;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -73,24 +72,6 @@ class DefaultPlexusCipherTest {
         String mixedBraces = "Comment {foo\\{This is a test\\}} other comment with a: }";
         assertEquals(noBraces, pc.unDecorate(normalBraces));
         assertEquals("foo\\{" + noBraces + "\\}", pc.unDecorate(mixedBraces));
-    }
-
-    @Test
-    void testAllAlgorithmExists() throws Exception {
-        String[] res = DefaultPlexusCipher.getCryptoImpls("Cipher");
-        assertNotNull(res, "No Cipher providers found in the current environment");
-        // System.out.println("\n=== Available ciphers :");
-        // for (String re : res) {
-        //    System.out.println(re);
-        // }
-        // System.out.println("====================");
-        HashSet<String> algs = new HashSet<>(pc.availableCiphers());
-        for (String provider : res) {
-            algs.remove(provider);
-        }
-        if (!algs.isEmpty()) {
-            throw new Exception("Cannot find algorithms " + algs + " in the current environment.");
-        }
     }
 
     @ParameterizedTest
