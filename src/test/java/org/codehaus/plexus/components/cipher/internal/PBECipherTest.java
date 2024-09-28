@@ -17,7 +17,7 @@ specific language governing permissions and limitations
 under the License.
  */
 
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class PBECipherTest {
 
     final String clearText = "veryOpenText";
 
-    final String encryptedText = "F7eMV2QRQF4H0ODCA1nrTGUWacCXVvPemSjaQjGbO6U=";
+    final String encryptedText = "xnQ1RvJFoJsHoTZKyv76ej3XTGKt99ShUt/kPv4yHjw=";
 
     final String password = "testtest";
 

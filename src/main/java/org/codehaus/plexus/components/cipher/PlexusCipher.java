@@ -10,16 +10,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher;
 
 /**
  * @author Oleg Gusakov
  */
 public interface PlexusCipher {
-    char ENCRYPTED_STRING_DECORATION_START = '{';
-
-    char ENCRYPTED_STRING_DECORATION_STOP = '}';
-
     /**
      * encrypt given string with the given passPhrase and encode it into base64
      *

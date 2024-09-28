@@ -10,17 +10,11 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher;
 
-public class PlexusCipherException extends Exception {
-    public PlexusCipherException() {}
-
+public class PlexusCipherException extends RuntimeException {
     public PlexusCipherException(String message) {
         super(message);
-    }
-
-    public PlexusCipherException(Throwable cause) {
-        super(cause);
     }
 
     public PlexusCipherException(String message, Throwable cause) {

@@ -10,7 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -22,7 +22,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.sisu.Typed;
+import org.codehaus.plexus.components.cipher.PlexusCipher;
+import org.codehaus.plexus.components.cipher.PlexusCipherException;
 
 /**
  * Default implementation of {@link PlexusCipher}. This class is thread safe.
@@ -30,10 +31,11 @@ import org.eclipse.sisu.Typed;
  * @author Oleg Gusakov
  */
 @Singleton
-@Named("default")
-@Typed(PlexusCipher.class)
+@Named
 public class DefaultPlexusCipher implements PlexusCipher {
     private static final Pattern ENCRYPTED_STRING_PATTERN = Pattern.compile(".*?[^\\\\]?\\{(.*?[^\\\\])\\}.*");
+    private static final String ENCRYPTED_STRING_DECORATION_START = "{";
+    private static final String ENCRYPTED_STRING_DECORATION_STOP = "}";
 
     private final PBECipher _cipher;
 
@@ -45,7 +47,7 @@ public class DefaultPlexusCipher implements PlexusCipher {
     // ---------------------------------------------------------------
     @Override
     public String encrypt(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.length() < 1) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
 
@@ -61,7 +63,7 @@ public class DefaultPlexusCipher implements PlexusCipher {
     // ---------------------------------------------------------------
     @Override
     public String decrypt(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.length() < 1) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
 
@@ -71,7 +73,7 @@ public class DefaultPlexusCipher implements PlexusCipher {
     // ---------------------------------------------------------------
     @Override
     public String decryptDecorated(final String str, final String passPhrase) throws PlexusCipherException {
-        if (str == null || str.length() < 1) {
+        if (str == null || str.isEmpty()) {
             return str;
         }
 
@@ -85,7 +87,7 @@ public class DefaultPlexusCipher implements PlexusCipher {
     // ----------------------------------------------------------------------------
     @Override
     public boolean isEncryptedString(final String str) {
-        if (str == null || str.length() < 1) {
+        if (str == null || str.isEmpty()) {
             return false;
         }
 
@@ -98,11 +100,10 @@ public class DefaultPlexusCipher implements PlexusCipher {
     @Override
     public String unDecorate(final String str) throws PlexusCipherException {
         Matcher matcher = ENCRYPTED_STRING_PATTERN.matcher(str);
-
         if (matcher.matches() || matcher.find()) {
             return matcher.group(1);
         } else {
-            throw new PlexusCipherException("default.plexus.cipher.badEncryptedPassword");
+            throw new PlexusCipherException("Malformed decorated string");
         }
     }
 

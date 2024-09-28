@@ -17,7 +17,7 @@ specific language governing permissions and limitations
 under the License.
  */
 
-package org.sonatype.plexus.components.cipher;
+package org.codehaus.plexus.components.cipher.internal;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -26,6 +26,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -34,30 +36,21 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+import org.codehaus.plexus.components.cipher.PlexusCipherException;
+
 /**
  * This class is thread-safe.
  *
  * @author Oleg Gusakov
  */
 public class PBECipher {
-    protected static final String STRING_ENCODING = "UTF8";
-
+    protected static final Charset STRING_ENCODING = StandardCharsets.UTF_8;
     protected static final int SPICE_SIZE = 16;
-
     protected static final int SALT_SIZE = 8;
-
     protected static final int CHUNK_SIZE = 16;
-
-    protected static final byte WIPER = 0;
-
-    protected static final String DIGEST_ALG = "SHA-256";
-
     protected static final String KEY_ALG = "AES";
-
     protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
-
     protected static final int PBE_ITERATIONS = 310000;
-
     private static final SecureRandom _secureRandom = new SecureRandom();
 
     // ---------------------------------------------------------------
@@ -95,7 +88,7 @@ public class PBECipher {
 
             return Base64.getEncoder().encodeToString(allEncryptedBytes);
         } catch (Exception e) {
-            throw new PlexusCipherException(e);
+            throw new PlexusCipherException(e.getMessage(), e);
         }
     }
 
@@ -122,7 +115,7 @@ public class PBECipher {
 
             return new String(clearBytes, STRING_ENCODING);
         } catch (Exception e) {
-            throw new PlexusCipherException(e);
+            throw new PlexusCipherException(e.getMessage(), e);
         }
     }
     // -------------------------------------------------------------------------------
@@ -131,7 +124,7 @@ public class PBECipher {
                     InvalidAlgorithmParameterException, InvalidKeySpecException {
 
         KeySpec spec = new PBEKeySpec(pwd, salt, PBE_ITERATIONS, SPICE_SIZE * 16);
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
         byte[] keyAndIv = factory.generateSecret(spec).getEncoded();
 
         byte[] key = new byte[SPICE_SIZE];
