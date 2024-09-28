@@ -12,74 +12,76 @@
  */
 package org.codehaus.plexus.components.cipher;
 
+import java.util.Set;
+
 /**
  * @author Oleg Gusakov
  */
 public interface PlexusCipher {
+
     /**
-     * encrypt given string with the given passPhrase and encode it into base64
+     * Returns the available cipher algorithms, never {@code null}.
+     */
+    Set<String> availableCiphers();
+
+    /**
+     * Encrypt given string with the given alg and passPhrase and encode it into Base64 string.
      *
-     * @param str       string to encrypt
-     * @param passPhrase pass phrase
-     * @return encrypted str
+     * @param alg cipher alg to use, never {@code null}
+     * @param str string to encrypt, never {@code null}
+     * @param passPhrase pass phrase, never {@code null}
+     * @return encrypted str, never {@code null}
      * @throws PlexusCipherException if encryption fails
      */
-    String encrypt(String str, String passPhrase) throws PlexusCipherException;
+    String encrypt(String alg, String str, String passPhrase) throws PlexusCipherException;
 
     /**
-     * encrypt given string with the given passPhrase, encode it into base64 and return result, wrapped into { }
-     * decorations
+     * Encrypt given string with the given alg and passPhrase and encode it into Base64 decorated string.
      *
-     * @param str      string to encrypt
-     * @param passPhrase pass phrase
-     * @return encrypted and decorated str
+     * @param alg cipher alg to use, never {@code null}
+     * @param str string to encrypt, never {@code null}
+     * @param passPhrase pass phrase, never {@code null}
+     * @return encrypted and decorated str, never {@code null}
      * @throws PlexusCipherException if encryption fails
      */
-    String encryptAndDecorate(String str, String passPhrase) throws PlexusCipherException;
+    String encryptAndDecorate(String alg, String str, String passPhrase) throws PlexusCipherException;
 
     /**
-     * decrypt given base64 encrypted string
+     * Decrypt given Base64 encoded string with the given alg and passPhrase and return resulting string.
      *
-     * @param str       base64 encoded string
-     * @param passPhrase     pass phrase
-     * @return decrypted str
-     * @throws PlexusCipherException if decryption fails
+     * @param alg cipher alg to use, never {@code null}
+     * @param str string to encrypt, never {@code null}
+     * @param passPhrase pass phrase, never {@code null}
+     * @return encrypted and decorated str, never {@code null}
+     * @throws PlexusCipherException if encryption fails
      */
-    String decrypt(String str, String passPhrase) throws PlexusCipherException;
+    String decrypt(String alg, String str, String passPhrase) throws PlexusCipherException;
 
     /**
-     * decrypt given base64 encoded encrypted string. If string is decorated, decrypt base64 encoded string inside
-     * decorations
+     * Decrypt given decorated  Base64 encoded string with the given alg and passPhrase and return resulting string.
      *
-     * @param str    base64 encoded string
-     * @param passPhrase     pass phrase
-     * @return decrypted decorated str
-     * @throws PlexusCipherException if decryption fails
+     * @param alg cipher alg to use, never {@code null}
+     * @param str string to encrypt, never {@code null}
+     * @param passPhrase pass phrase, never {@code null}
+     * @return encrypted and decorated str, never {@code null}
+     * @throws PlexusCipherException if encryption fails
      */
-    String decryptDecorated(String str, String passPhrase) throws PlexusCipherException;
+    String decryptDecorated(String alg, String str, String passPhrase) throws PlexusCipherException;
 
     /**
-     * check if given string is decorated
-     *
-     * @param str string to check
-     * @return true if string is encrypted
+     * Check if given string is decorated.
      */
     boolean isEncryptedString(String str);
 
     /**
-     * return string inside decorations
+     * Remove decorations from string, if it was decorated.
      *
-     * @param str decorated string
-     * @return undecorated str
-     * @throws PlexusCipherException if decryption fails
+     * @throws PlexusCipherException is string is malformed
      */
     String unDecorate(String str) throws PlexusCipherException;
 
     /**
-     * decorated given string with { and }
-     *
-     * @param str string to decorate
-     * @return decorated str
+     * Decorates given string.
      */
     String decorate(String str);
 }

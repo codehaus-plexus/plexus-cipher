@@ -12,11 +12,16 @@
  */
 package org.codehaus.plexus.components.cipher.internal;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import org.codehaus.plexus.components.cipher.PlexusCipher;
 import org.codehaus.plexus.components.cipher.PlexusCipherException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,15 +36,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class DefaultPlexusCipherTest {
     private final String passPhrase = "testtest";
-
     final String str = "my testing phrase";
-
-    final String encStr = "RRvejxJ+wksH/kWnYfun/GeFoPKh6JHcA2dmxMOIraZiIuLISplmdyvl2Sq04rpP";
     PlexusCipher pc;
+
+    static String[] ALG = new String[] {AESCBCPKCS5Padding.CIPHER_ALG, AESGCMNoPadding.CIPHER_ALG};
 
     @BeforeEach
     void prepare() {
-        pc = new DefaultPlexusCipher();
+        HashMap<String, Cipher> ciphers = new HashMap<>();
+        ciphers.put(AESCBCPKCS5Padding.CIPHER_ALG, new AESGCMNoPadding());
+        ciphers.put(AESGCMNoPadding.CIPHER_ALG, new AESGCMNoPadding());
+        pc = new DefaultPlexusCipher(ciphers);
+    }
+
+    @Test
+    void testAvailableCiphers() {
+        HashSet<String> wanted = new HashSet<>(Arrays.asList(ALG));
+        assertEquals(wanted, pc.availableCiphers());
     }
 
     @Test
@@ -48,13 +61,9 @@ class DefaultPlexusCipherTest {
         String normalBraces = "Comment {This is a test} other comment with a: }";
         String escapedBraces = "\\{This is a test\\}";
         String mixedBraces = "Comment {foo\\{This is a test\\}} other comment with a: }";
-
         assertFalse(pc.isEncryptedString(noBraces));
-
         assertTrue(pc.isEncryptedString(normalBraces));
-
         assertFalse(pc.isEncryptedString(escapedBraces));
-
         assertTrue(pc.isEncryptedString(mixedBraces));
     }
 
@@ -63,95 +72,61 @@ class DefaultPlexusCipherTest {
         String noBraces = "This is a test";
         String normalBraces = "Comment {This is a test} other comment with a: }";
         String mixedBraces = "Comment {foo\\{This is a test\\}} other comment with a: }";
-
         assertEquals(noBraces, pc.unDecorate(normalBraces));
-
         assertEquals("foo\\{" + noBraces + "\\}", pc.unDecorate(mixedBraces));
     }
 
-    // -------------------------------------------------------------
-
     @Test
-    void testDefaultAlgorithmExists() throws Exception {
+    void testAllAlgorithmExists() throws Exception {
         String[] res = DefaultPlexusCipher.getCryptoImpls("Cipher");
         assertNotNull(res, "No Cipher providers found in the current environment");
-
-        System.out.println("\n=== Available ciphers :");
-        for (String re : res) {
-            System.out.println(re);
-        }
-        System.out.println("====================");
-
+        // System.out.println("\n=== Available ciphers :");
+        // for (String re : res) {
+        //    System.out.println(re);
+        // }
+        // System.out.println("====================");
+        HashSet<String> algs = new HashSet<>(pc.availableCiphers());
         for (String provider : res) {
-            if (PBECipher.KEY_ALG.equalsIgnoreCase(provider)) return;
+            algs.remove(provider);
         }
-
-        throw new Exception("Cannot find default algorithm " + PBECipher.KEY_ALG + " in the current environment.");
+        if (!algs.isEmpty()) {
+            throw new Exception("Cannot find algorithms " + algs + " in the current environment.");
+        }
     }
 
-    // -------------------------------------------------------------
-
-    @Disabled("This test is not really a test")
-    @Test
-    void stestFindDefaultAlgorithm() {
-        String[] res = DefaultPlexusCipher.getServiceTypes();
-        assertNotNull(res, "No service types found in the current environment");
-
-        String[] impls = DefaultPlexusCipher.getCryptoImpls("Cipher");
-        assertNotNull(impls, "No Cipher providers found in the current environment");
-
-        for (String impl : impls)
-            try {
-                System.out.print(impl);
-                pc.encrypt(str, passPhrase);
-                System.out.println("------------------> Success !!!!!!");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-    }
-
-    // -------------------------------------------------------------
-    @Test
-    void testEncrypt() throws Exception {
-        String xRes = pc.encrypt(str, passPhrase);
-
-        System.out.println(xRes);
-
-        String res = pc.decrypt(xRes, passPhrase);
-
+    @ParameterizedTest
+    @FieldSource("ALG")
+    void testEncrypt(String alg) throws Exception {
+        String xRes = pc.encrypt(alg, str, passPhrase);
+        // System.out.println(xRes);
+        String res = pc.decrypt(alg, xRes, passPhrase);
         assertEquals(str, res, "Encryption/Decryption did not produce desired result");
     }
 
-    // -------------------------------------------------------------
-
-    @Test
-    void testEncryptVariableLengths() throws Exception {
+    @ParameterizedTest
+    @FieldSource("ALG")
+    void testEncryptVariableLengths(String alg) throws Exception {
         String pass = "g";
-
         for (int i = 0; i < 64; i++) {
             pass = pass + 'a';
-
-            String xRes = pc.encrypt(str, pass);
-
-            System.out.println(pass.length() + ": " + xRes);
-
-            String res = pc.decrypt(xRes, pass);
-
+            String xRes = pc.encrypt(alg, str, pass);
+            // System.out.println(pass.length() + ": " + xRes);
+            String res = pc.decrypt(alg, xRes, pass);
             assertEquals(str, res, "Encryption/Decryption did not produce desired result");
         }
     }
 
-    @Test
-    void testDecrypt() {
+    @ParameterizedTest
+    @FieldSource("ALG")
+    void testDecrypt(String alg) {
         assertDoesNotThrow(
                 () -> {
-                    String res = pc.decrypt(encStr, passPhrase);
+                    String encStr = pc.encrypt(alg, str, passPhrase);
+                    String res = pc.decrypt(alg, encStr, passPhrase);
                     assertEquals(str, res, "Decryption did not produce desired result");
                 },
                 "Decryption failed: ");
     }
-
-    // -------------------------------------------------------------
 
     @Test
     void testDecorate() {
@@ -159,20 +134,17 @@ class DefaultPlexusCipherTest {
         assertEquals("{aaa}", res, "Decoration failed");
     }
 
-    // -------------------------------------------------------------
-
     @Test
     void testUnDecorate() throws Exception {
         String res = pc.unDecorate("{aaa}");
         assertEquals("aaa", res, "Decoration failed");
     }
 
-    // -------------------------------------------------------------
-
-    @Test
-    void testEncryptAndDecorate() throws Exception {
-        String res = pc.encryptAndDecorate("my-password", "12345678");
-
+    @ParameterizedTest
+    @FieldSource("ALG")
+    void testEncryptAndDecorate(String alg) throws Exception {
+        String res = pc.encryptAndDecorate(alg, "my-password", "12345678");
         assertEquals('{', res.charAt(0));
+        assertEquals('}', res.charAt(res.length() - 1));
     }
 }

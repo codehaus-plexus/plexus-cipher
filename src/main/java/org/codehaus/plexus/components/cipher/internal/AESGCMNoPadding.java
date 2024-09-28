@@ -22,11 +22,12 @@ package org.codehaus.plexus.components.cipher.internal;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -38,107 +39,75 @@ import java.util.Base64;
 
 import org.codehaus.plexus.components.cipher.PlexusCipherException;
 
-/**
- * This class is thread-safe.
- *
- * @author Oleg Gusakov
- */
-public class PBECipher {
-    protected static final Charset STRING_ENCODING = StandardCharsets.UTF_8;
-    protected static final int SPICE_SIZE = 16;
-    protected static final int SALT_SIZE = 8;
-    protected static final int CHUNK_SIZE = 16;
-    protected static final String KEY_ALG = "AES";
-    protected static final String CIPHER_ALG = "AES/CBC/PKCS5Padding";
-    protected static final int PBE_ITERATIONS = 310000;
+@Singleton
+@Named(AESGCMNoPadding.CIPHER_ALG)
+public class AESGCMNoPadding implements org.codehaus.plexus.components.cipher.internal.Cipher {
+    public static final String CIPHER_ALG = "AES/GCM/NoPadding";
+
+    private static final int SPICE_SIZE = 16;
+    private static final int SALT_SIZE = 8;
+    private static final int CHUNK_SIZE = 16;
+    private static final String KEY_ALG = "AES";
+    private static final int PBE_ITERATIONS = 310000;
     private static final SecureRandom _secureRandom = new SecureRandom();
 
-    // ---------------------------------------------------------------
-    private byte[] getSalt(final int sz) {
+    private byte[] getSalt(int sz) {
         byte[] res = new byte[sz];
-
         _secureRandom.nextBytes(res);
-
         return res;
     }
-    // -------------------------------------------------------------------------------
-    public String encrypt64(final String clearText, final String password) throws PlexusCipherException {
+
+    @Override
+    public String encrypt(String clearText, String password) throws PlexusCipherException {
         try {
-            byte[] clearBytes = clearText.getBytes(STRING_ENCODING);
-
+            byte[] clearBytes = clearText.getBytes(StandardCharsets.UTF_8);
             byte[] salt = getSalt(SALT_SIZE);
-
             Cipher cipher = createCipher(password.toCharArray(), salt, Cipher.ENCRYPT_MODE);
-
             byte[] encryptedBytes = cipher.doFinal(clearBytes);
-
             int len = encryptedBytes.length;
-
             byte padLen = (byte) (CHUNK_SIZE - (SALT_SIZE + len + 1) % CHUNK_SIZE);
-
             int totalLen = SALT_SIZE + len + padLen + 1;
-
             byte[] allEncryptedBytes = getSalt(totalLen);
-
             System.arraycopy(salt, 0, allEncryptedBytes, 0, SALT_SIZE);
-
             allEncryptedBytes[SALT_SIZE] = padLen;
-
             System.arraycopy(encryptedBytes, 0, allEncryptedBytes, SALT_SIZE + 1, len);
-
             return Base64.getEncoder().encodeToString(allEncryptedBytes);
         } catch (Exception e) {
             throw new PlexusCipherException(e.getMessage(), e);
         }
     }
 
-    // -------------------------------------------------------------------------------
-    public String decrypt64(final String encryptedText, final String password) throws PlexusCipherException {
+    @Override
+    public String decrypt(String encryptedText, String password) throws PlexusCipherException {
         try {
             byte[] allEncryptedBytes = Base64.getDecoder().decode(encryptedText.getBytes());
-
             int totalLen = allEncryptedBytes.length;
-
             byte[] salt = new byte[SALT_SIZE];
-
             System.arraycopy(allEncryptedBytes, 0, salt, 0, SALT_SIZE);
-
             byte padLen = allEncryptedBytes[SALT_SIZE];
-
             byte[] encryptedBytes = new byte[totalLen - SALT_SIZE - 1 - padLen];
-
             System.arraycopy(allEncryptedBytes, SALT_SIZE + 1, encryptedBytes, 0, encryptedBytes.length);
-
             Cipher cipher = createCipher(password.toCharArray(), salt, Cipher.DECRYPT_MODE);
-
             byte[] clearBytes = cipher.doFinal(encryptedBytes);
-
-            return new String(clearBytes, STRING_ENCODING);
+            return new String(clearBytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new PlexusCipherException(e.getMessage(), e);
         }
     }
-    // -------------------------------------------------------------------------------
-    private Cipher createCipher(final char[] pwd, byte[] salt, final int mode)
+
+    private Cipher createCipher(char[] pwd, byte[] salt, int mode)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
                     InvalidAlgorithmParameterException, InvalidKeySpecException {
-
         KeySpec spec = new PBEKeySpec(pwd, salt, PBE_ITERATIONS, SPICE_SIZE * 16);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
         byte[] keyAndIv = factory.generateSecret(spec).getEncoded();
-
         byte[] key = new byte[SPICE_SIZE];
-
-        byte[] iv = new byte[SPICE_SIZE];
-
+        byte[] iv = new byte[12];
+        _secureRandom.nextBytes(iv);
         System.arraycopy(keyAndIv, 0, key, 0, key.length);
-
-        System.arraycopy(keyAndIv, key.length, iv, 0, iv.length);
-
         Cipher cipher = Cipher.getInstance(CIPHER_ALG);
-
-        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), new IvParameterSpec(iv));
-
+        GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+        cipher.init(mode, new SecretKeySpec(key, KEY_ALG), gcmSpec);
         return cipher;
     }
 }
